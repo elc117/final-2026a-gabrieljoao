@@ -1,4 +1,4 @@
-*JOGO DE FAZENDEIRO - Happy Farm*
+*JOGO DE FAZENDEIRO - HAPPY FARM*
 
 *INFORMAÇÕES - ALUNOS:*
 - João Daniel Würdig Lucas (202510515)
