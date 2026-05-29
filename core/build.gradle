@@ -1,0 +1,52 @@
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+eclipse.project.name = appName + '-core'
+
+dependencies {
+  api "com.badlogicgames.ashley:ashley:$ashleyVersion"
+  api "com.badlogicgames.box2dlights:box2dlights:$box2dlightsVersion"
+  api "com.badlogicgames.gdx-controllers:gdx-controllers-core:$gdxControllersVersion"
+  api "com.badlogicgames.gdx:gdx-ai:$aiVersion"
+  api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
+  api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
+  api "com.badlogicgames.gdx:gdx:$gdxVersion"
+  api "com.bladecoder.ink:blade-ink:$bladeInkVersion"
+  api "com.crashinvaders.basisu:basisu-gdx:$gdxBasisUniversalVersion"
+  api "com.crashinvaders.basisu:basisu-wrapper:$gdxBasisUniversalVersion"
+  api "com.crashinvaders.lml:gdx-autumn-mvc:$lmlVersion"
+  api "com.crashinvaders.lml:gdx-autumn:$lmlVersion"
+  api "com.crashinvaders.lml:gdx-kiwi:$lmlVersion"
+  api "com.crashinvaders.lml:gdx-lml:$lmlVersion"
+  api "com.esotericsoftware.spine:spine-libgdx:$spineRuntimeVersion"
+  api "com.github.kotcrab.vis-ui:vis-ui:$visUiVersion"
+  api "com.github.raeleus.stripe:stripe:$stripeVersion"
+  api "com.github.raeleus:game-jolt-api:$gameJoltApiVersion"
+  api "com.github.tommyettinger:anim8-gdx:$anim8Version"
+  api "com.github.tommyettinger:colorful:$colorfulVersion"
+  api "com.github.tommyettinger:cringe:$cringeVersion"
+  api "com.github.tommyettinger:crux:$cruxVersion"
+  api "com.github.tommyettinger:digital:$digitalVersion"
+  api "com.github.tommyettinger:funderby:$funderbyVersion"
+  api "com.github.tommyettinger:gdx-TinyVG:$tinyVGVersion"
+  api "com.github.tommyettinger:jdkgdxds:$jdkgdxdsVersion"
+  api "com.github.tommyettinger:juniper:$juniperVersion"
+  api "com.github.tommyettinger:regexodus:$regExodusVersion"
+  api "com.github.tommyettinger:textratypist:$textratypistVersion"
+  api "com.squidpony:squidcore:$squidSquadVersion"
+  api "com.squidpony:squidgrid:$squidSquadVersion"
+  api "de.golfgl.gdxcontrollerutils:gdx-controllerutils-scene2d:$controllerScene2DVersion"
+  api "games.rednblack.hyperlap2d:libgdx-spine-extension:$h2dSpineExtensionVersion"
+  api "games.rednblack.hyperlap2d:libgdx-tinyvg-extension:$h2dTinyVGExtensionVersion"
+  api "games.rednblack.hyperlap2d:libgdx-typinglabel-extension:$h2dTypingLabelExtensionVersion"
+  api "games.rednblack.hyperlap2d:runtime-libgdx:$h2dVersion"
+  api "net.onedaybeard.artemis:artemis-odb:$artemisOdbVersion"
+  api "org.apache.commons:commons-collections4:$commonsCollectionsVersion"
+  api "space.earlygrey:shapedrawer:$shapeDrawerVersion"
+
+  if(enableGraalNative == 'true') {
+    implementation "io.github.berstanio:gdx-svmhelper-annotations:$graalHelperVersion"
+  }
+}
+
+jar {
+  duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
