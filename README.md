@@ -22,4 +22,5 @@
 Agora, devo usar o Claude para ter um direcionamento sobre como iniciar o projeto, prentendo aprender como construir um cenário base e incluir um personagem com movimentações funcionais e colisão, para testes. (Gabriel)
 
 - Dia 01/06: decidimos que o Gabriel vai ficar procurando sprites para o nosso game e eu vou focar em fazer funcionar os exemplos básicos da aula e organizar a relação de classes do nosso programa. (João)
-- Dia 01/06, 16:40 decidimos colocar o nome do bonequinho da sprite que o Gabriel pegou de Alfredo. (João)
+- Dia 01/06, 16:40: decidimos colocar o nome do bonequinho da sprite que o Gabriel pegou de Alfredo. (João)
+- Dia 01/06, 18:00: vimos algumas sprites promissoras com um boneco golpeando com espada, achamos que, se editarmos o arquivo num editor de pixels, podemos mudar essa espada para as nossas ferramentas. (João)
