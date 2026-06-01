@@ -20,3 +20,5 @@
 
 - Dia 29/05, 09:24 da manhã: Ontém após a aula, conversei com o Cadu e utilizei o Claude.AI para aprender a unir os arquivos gerados e realizar o commit no github. Consegui colocar em prática agora de manhã. Não sabia bem quais extensões do libGDX incluir, mas selecionei um número elevado cujos títulos tinham relação com jogos 2D ou me pareciam úteis.
 Agora, devo usar o Claude para ter um direcionamento sobre como iniciar o projeto, prentendo aprender como construir um cenário base e incluir um personagem com movimentações funcionais e colisão, para testes. (Gabriel)
+
+- Dia 01/06: decidimos que o Gabriel vai ficar procurando sprites para o nosso game e eu vou focar em fazer funcionar os exemplos básicos da aula e organizar a relação de classes do nosso programa. (João)
