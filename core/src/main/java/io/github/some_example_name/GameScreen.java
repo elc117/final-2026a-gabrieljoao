@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 
@@ -22,7 +23,7 @@ public class GameScreen implements Screen {
     // ── Tiled Map ─────────────────────────────────────────────
     private TiledMap mapa;
     private OrthogonalTiledMapRenderer mapaRenderer;
-    private static final float ESCALA_MAPA = 1f; // aumente para 2f ou 3f se quiser zoom
+    private static final float ESCALA_MAPA = 1f;
 
     // ── Spritesheets do personagem ────────────────────────────
     private Texture sheetDown, sheetUp, sheetLeft, sheetRight;
@@ -50,7 +51,7 @@ public class GameScreen implements Screen {
         // Câmera ortográfica — tamanho em tiles visíveis na tela
         // Com tiles de 16px, 20x15 tiles = 320x240px (estilo pixel art)
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, 320, 240);
+        camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         batch = new SpriteBatch();
 
@@ -73,8 +74,12 @@ public class GameScreen implements Screen {
 
         // ── Posição inicial no mapa (em pixels) ──
         // O mapa começa em coordenadas negativas — spawna perto do centro visível
-        playerX = 0;
-        playerY = 0;
+
+        TiledMapTileLayer camada = (TiledMapTileLayer) mapa.getLayers().get(0);
+        float mapWidth = camada.getWidth() * camada.getTileWidth();
+        float mapHeight = camada.getHeight() * camada.getTileHeight();
+        playerX = mapWidth / 2f;
+        playerY = mapHeight / 2f;
     }
 
     private Animation<TextureRegion> criarAnimacao(Texture sheet) {
@@ -123,6 +128,16 @@ public class GameScreen implements Screen {
             frameAtual = animAtual.getKeyFrame(0);
             stateTime = 0f;
         }
+        //Limites do mapa
+        TiledMapTileLayer camada = (TiledMapTileLayer) mapa.getLayers().get(0);
+        float mapWidth = camada.getWidth() * camada.getTileWidth();
+        float mapHeight = camada.getHeight() * camada.getTileHeight();
+        float metadeW = FRAME_WIDTH / 2f;
+        float metadeH = FRAME_HEIGHT / 2f;
+
+        //Câmera não sai do mapa
+        playerX = Math.max(metadeW, Math.min(playerX, mapWidth - metadeW));
+        playerY = Math.max(metadeH, Math.min(playerY, mapHeight - metadeH));
 
         // ── Câmera segue o personagem ──
         camera.position.set(playerX, playerY, 0);
@@ -136,7 +151,7 @@ public class GameScreen implements Screen {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
             // Personagem renderizado 2x maior (48x48px) para ficar proporcional ao mapa
-            float escalaPersonagem = 2f;
+            float escalaPersonagem = 1f;
             batch.draw(
                 frameAtual,
                 playerX - (FRAME_WIDTH  * escalaPersonagem) / 2f,
@@ -149,7 +164,7 @@ public class GameScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        camera.setToOrtho(false, 320, 240);
+        camera.setToOrtho(false, width, height);
     }
 
     @Override
