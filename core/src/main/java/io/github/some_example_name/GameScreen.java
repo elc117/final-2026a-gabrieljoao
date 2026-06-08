@@ -16,6 +16,10 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 
 public class GameScreen implements Screen {
 
+    // -- Definição de constantes do viewport (controle de zoom) --
+    public static final float VIEWPORT_WIDTH = 320f;
+    public static final float VIEWPORT_HEIGHT = 240f; 
+
     // ── Câmera e renderização ─────────────────────────────────
     private OrthographicCamera camera;
     private SpriteBatch batch;
@@ -51,7 +55,7 @@ public class GameScreen implements Screen {
         // Câmera ortográfica — tamanho em tiles visíveis na tela
         // Com tiles de 16px, 20x15 tiles = 320x240px (estilo pixel art)
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        camera.setToOrtho(false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
 
         batch = new SpriteBatch();
 
@@ -87,7 +91,7 @@ public class GameScreen implements Screen {
         TextureRegion[] frames = tmp[0];
         return new Animation<>(FRAME_DURATION, frames);
     }
-
+ 
     // ─────────────────────────────────────────────────────────
     @Override
     public void render(float delta) {
@@ -151,7 +155,7 @@ public class GameScreen implements Screen {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
             // Personagem renderizado 2x maior (48x48px) para ficar proporcional ao mapa
-            float escalaPersonagem = 1f;
+            float escalaPersonagem = 1.5f;
             batch.draw(
                 frameAtual,
                 playerX - (FRAME_WIDTH  * escalaPersonagem) / 2f,
@@ -164,7 +168,8 @@ public class GameScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        camera.setToOrtho(false, width, height);
+        camera.setToOrtho(false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT); //Viewport fixo em constante
+                                                                   //Mais fácil de controlar o zoom
     }
 
     @Override
