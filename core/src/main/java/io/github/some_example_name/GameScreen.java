@@ -9,61 +9,81 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.utils.Array;
 
 public class GameScreen implements Screen {
-
-    // -- Definição de constantes do viewport (controle de zoom) --
-    public static final float VIEWPORT_WIDTH = 320f;
-    public static final float VIEWPORT_HEIGHT = 240f; 
 
     // ── Câmera e renderização ─────────────────────────────────
     private OrthographicCamera camera;
     private SpriteBatch batch;
+
+    // ── Viewport (controla o zoom) ────────────────────────────
+    private static final float VIEWPORT_WIDTH  = 320f;
+    private static final float VIEWPORT_HEIGHT = 240f;
 
     // ── Tiled Map ─────────────────────────────────────────────
     private TiledMap mapa;
     private OrthogonalTiledMapRenderer mapaRenderer;
     private static final float ESCALA_MAPA = 1f;
 
+    // ── Colisões do mapa ──────────────────────────────────────
+    private Array<Rectangle> colisoes = new Array<>();
+
     // ── Spritesheets do personagem ────────────────────────────
     private Texture sheetDown, sheetUp, sheetLeft, sheetRight;
     private Animation<TextureRegion> animDown, animUp, animLeft, animRight;
     private Animation<TextureRegion> animAtual;
 
-    // ── Dimensões do frame (288px ÷ 12 frames = 24x24) ───────
-    private static final int FRAME_COLS   = 12;
-    private static final int FRAME_WIDTH  = 24;
-    private static final int FRAME_HEIGHT = 24;
+    // ── Dimensões do frame ────────────────────────────────────
+    private static final int FRAME_COLS     = 12;
+    private static final int FRAME_WIDTH    = 24;
+    private static final int FRAME_HEIGHT   = 24;
     private static final float FRAME_DURATION = 0.1f;
 
-    // ── Posição e velocidade do personagem ────────────────────
+    // ── Hitbox do personagem ──────────────────────────────────
+    private Rectangle hitboxPlayer;
+    // Hitbox menor que o sprite para ficar mais natural
+    private static final float HITBOX_W = 12f;
+    private static final float HITBOX_H = 10f;
+
+    // ── Posição e velocidade ──────────────────────────────────
     private float playerX, playerY;
-    private static final float VELOCIDADE = 100f; // pixels/segundo no mundo do mapa
+    private static final float VELOCIDADE = 100f;
+    private float mapWidth, mapHeight;
 
     // ── Controle de animação ──────────────────────────────────
     private float stateTime = 0f;
-    private boolean movendo = false;
+    private boolean movendo  = false;
 
     // ─────────────────────────────────────────────────────────
     @Override
     public void show() {
-
-        // Câmera ortográfica — tamanho em tiles visíveis na tela
-        // Com tiles de 16px, 20x15 tiles = 320x240px (estilo pixel art)
         camera = new OrthographicCamera();
         camera.setToOrtho(false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
 
         batch = new SpriteBatch();
 
-        // ── Carrega o mapa TMX ──
-        mapa = new TmxMapLoader().load("Exterior.tmx");
+        // ── Carrega o mapa ──
+        mapa         = new TmxMapLoader().load("Exterior.tmx");
         mapaRenderer = new OrthogonalTiledMapRenderer(mapa, ESCALA_MAPA);
 
-        // ── Carrega spritesheets ──
+        // ── Dimensões do mapa ──
+        TiledMapTileLayer camada = (TiledMapTileLayer) mapa.getLayers().get(0);
+        mapWidth  = camada.getWidth()  * camada.getTileWidth();
+        mapHeight = camada.getHeight() * camada.getTileHeight();
+
+        // ── Carrega retângulos de colisão da camada "Collisions" ──
+        carregarColisoes();
+
+        // ── Spritesheets ──
         sheetDown  = new Texture("Walk_Down.png");
         sheetUp    = new Texture("Walk_Up.png");
         sheetLeft  = new Texture("Walk_Left.png");
@@ -73,34 +93,55 @@ public class GameScreen implements Screen {
         animUp    = criarAnimacao(sheetUp);
         animLeft  = criarAnimacao(sheetLeft);
         animRight = criarAnimacao(sheetRight);
-
         animAtual = animDown;
 
-        // ── Posição inicial no mapa (em pixels) ──
-        // O mapa começa em coordenadas negativas — spawna perto do centro visível
+        // ── Posição inicial e hitbox ──
+        playerX = mapWidth  / 690f;
+        playerY = mapHeight / 140f;
+        hitboxPlayer = new Rectangle(playerX, playerY, HITBOX_W, HITBOX_H);
+    }
 
-        TiledMapTileLayer camada = (TiledMapTileLayer) mapa.getLayers().get(0);
-        float mapWidth = camada.getWidth() * camada.getTileWidth();
-        float mapHeight = camada.getHeight() * camada.getTileHeight();
-        playerX = mapWidth / 2f;
-        playerY = mapHeight / 2f;
+    // Carrega os objetos da camada "Collisions" do Tiled
+    private void carregarColisoes() {
+        for (MapLayer layer : mapa.getLayers()) {
+            //Pula layers
+            if (layer instanceof TiledMapTileLayer) continue;
+
+            //processa só a camada de colisões
+            if (!layer.getName().equals("Collisions")) continue;
+
+            for (MapObject object : layer.getObjects()) {
+                if (object instanceof RectangleMapObject) {
+                    Rectangle r = ((RectangleMapObject) object).getRectangle();
+                    //ajusta o tamanho e posição do y(hitbox) do tiled para o personagem
+
+                    float yCorrigido = mapHeight - r.y - r.height;
+                    colisoes.add(new Rectangle(r.x, yCorrigido, r.width, r.height));
+                }
+            }
+        }
+        //contador de colisões, para testes.
+        Gdx.app.log("Colisoes", "Total de colisoes carregadas: " + colisoes.size);
     }
 
     private Animation<TextureRegion> criarAnimacao(Texture sheet) {
-        TextureRegion[][] tmp = TextureRegion.split(sheet, FRAME_WIDTH, FRAME_HEIGHT);
-        TextureRegion[] frames = tmp[0];
+        TextureRegion[][] tmp    = TextureRegion.split(sheet, FRAME_WIDTH, FRAME_HEIGHT);
+        TextureRegion[]   frames = tmp[0];
         return new Animation<>(FRAME_DURATION, frames);
     }
- 
+
     // ─────────────────────────────────────────────────────────
     @Override
     public void render(float delta) {
-        // Limpa tela
         Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         stateTime += delta;
         movendo = false;
+
+        // ── Guarda posição anterior para reverter se colidir ──
+        float anteriorX = playerX;
+        float anteriorY = playerY;
 
         // ── Movimentação WASD ──
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
@@ -124,52 +165,65 @@ public class GameScreen implements Screen {
             movendo = true;
         }
 
-        // Frame atual da animação
+        // ── Atualiza hitbox na nova posição ──
+        // Centraliza a hitbox nos pés do personagem
+        hitboxPlayer.setPosition(
+            playerX - HITBOX_W / 2f,
+            playerY - HITBOX_H
+        );
+
+        // ── Verifica colisão com os objetos do mapa ──
+        for (Rectangle obstaculo : colisoes) {
+            if (hitboxPlayer.overlaps(obstaculo)) {
+                // Reverte para a posição anterior se colidiu
+                playerX = anteriorX;
+                playerY = anteriorY;
+                hitboxPlayer.setPosition(
+                    playerX - HITBOX_W / 2f,
+                    playerY - HITBOX_H
+                );
+                break;
+            }
+        }
+
+        // ── Limites do mapa (não sai pela borda) ──
+        playerX = Math.max(HITBOX_W / 2f, Math.min(playerX, mapWidth  - HITBOX_W / 2f));
+        playerY = Math.max(HITBOX_H,      Math.min(playerY, mapHeight - HITBOX_H));
+
+        // ── Frame da animação ──
         TextureRegion frameAtual;
         if (movendo) {
             frameAtual = animAtual.getKeyFrame(stateTime, true);
         } else {
             frameAtual = animAtual.getKeyFrame(0);
-            stateTime = 0f;
+            stateTime  = 0f;
         }
-        //Limites do mapa
-        TiledMapTileLayer camada = (TiledMapTileLayer) mapa.getLayers().get(0);
-        float mapWidth = camada.getWidth() * camada.getTileWidth();
-        float mapHeight = camada.getHeight() * camada.getTileHeight();
-        float metadeW = FRAME_WIDTH / 2f;
-        float metadeH = FRAME_HEIGHT / 2f;
-
-        //Câmera não sai do mapa
-        playerX = Math.max(metadeW, Math.min(playerX, mapWidth - metadeW));
-        playerY = Math.max(metadeH, Math.min(playerY, mapHeight - metadeH));
 
         // ── Câmera segue o personagem ──
         camera.position.set(playerX, playerY, 0);
         camera.update();
 
-        // ── Renderiza o mapa PRIMEIRO (fundo) ──
+        // ── Renderiza mapa ──
         mapaRenderer.setView(camera);
         mapaRenderer.render();
 
-        // ── Renderiza o personagem POR CIMA do mapa ──
+        // ── Renderiza personagem ──
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
-            // Personagem renderizado 2x maior (48x48px) para ficar proporcional ao mapa
-            float escalaPersonagem = 1.5f;
+            float escala = 1f;
             batch.draw(
                 frameAtual,
-                playerX - (FRAME_WIDTH  * escalaPersonagem) / 2f,
-                playerY - (FRAME_HEIGHT * escalaPersonagem) / 2f,
-                FRAME_WIDTH  * escalaPersonagem,
-                FRAME_HEIGHT * escalaPersonagem
+                playerX - (FRAME_WIDTH  * escala) / 2f,
+                playerY - (FRAME_HEIGHT * escala) / 2f,
+                FRAME_WIDTH  * escala,
+                FRAME_HEIGHT * escala
             );
         batch.end();
     }
 
     @Override
     public void resize(int width, int height) {
-        camera.setToOrtho(false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT); //Viewport fixo em constante
-                                                                   //Mais fácil de controlar o zoom
+        camera.setToOrtho(false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
     }
 
     @Override
@@ -183,7 +237,7 @@ public class GameScreen implements Screen {
         sheetRight.dispose();
     }
 
-    @Override public void pause() {}
+    @Override public void pause()  {}
     @Override public void resume() {}
-    @Override public void hide() {}
+    @Override public void hide()   {}
 }
