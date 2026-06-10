@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="64" height="61" tilewidth="16" tileheight="16" infinite="0" nextlayerid="122" nextobjectid="144">
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="64" height="61" tilewidth="16" tileheight="16" infinite="0" nextlayerid="122" nextobjectid="148">
  <tileset firstgid="1" name="ground_grass_details" tilewidth="16" tileheight="16" tilecount="378" columns="21">
   <image source="ground_grass_details.png" width="336" height="288"/>
  </tileset>
@@ -5408,7 +5408,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <layer id="118" name="Collisions" width="64" height="61">
+ <layer id="118" name="CollisionsTiles" width="64" height="61">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -9052,16 +9052,13 @@
   <object id="66" x="383.5" y="959.5" width="226.5" height="16.5"/>
   <object id="68" x="608" y="960" width="287" height="16"/>
   <object id="71" x="895.5" y="960.5" width="129" height="15.5"/>
-  <object id="72" x="1075.5" y="953" height="1"/>
   <object id="73" x="1008.5" y="653" width="14.5" height="307"/>
   <object id="74" x="777.5" y="640" width="245.5" height="15.5"/>
   <object id="75" x="437" y="639.5" width="340" height="16"/>
   <object id="76" x="368" y="638.5" width="67.5" height="17.5"/>
-  <object id="77" x="404.5" y="617"/>
   <object id="78" x="368" y="655.5" width="15.5" height="140"/>
   <object id="79" x="367.5" y="796" width="16" height="3.5"/>
   <object id="80" x="367" y="800" width="16.5" height="176"/>
-  <object id="81" x="376" y="999.5"/>
   <object id="82" x="624.5" y="742.5" width="125" height="69.5"/>
   <object id="113" x="794.5" y="744" width="12.5" height="15"/>
   <object id="114" x="808.5" y="793.5" width="18" height="20.5"/>
@@ -9077,16 +9074,15 @@
   <object id="128" x="550.5" y="826" width="19" height="28.5"/>
   <object id="129" x="555.5" y="793" width="10.5" height="20"/>
   <object id="130" x="498.5" y="848" width="13" height="11.5"/>
-  <object id="131" x="706" y="1076.5"/>
   <object id="132" x="690.5" y="919.5" width="35.5" height="38.5"/>
   <object id="134" x="683" y="922" width="5" height="37"/>
   <object id="135" x="425" y="829.5" width="16" height="12.5"/>
   <object id="136" x="521" y="791.5" width="14" height="15"/>
-  <object id="137" x="535" y="806.5"/>
   <object id="138" x="956.5" y="758.5" width="31.5" height="48.5"/>
   <object id="139" x="954.5" y="865.5" width="9" height="10"/>
   <object id="140" x="947" y="739.5" width="9.5" height="8"/>
   <object id="142" x="966.5" y="694" width="16.5" height="15.5"/>
   <object id="143" x="809.5" y="935" width="12.5" height="18"/>
+  <object id="144" x="876" y="787.5" width="5.5" height="8"/>
  </objectgroup>
 </map>
