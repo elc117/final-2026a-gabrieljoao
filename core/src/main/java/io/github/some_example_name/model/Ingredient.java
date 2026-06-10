@@ -1,17 +1,19 @@
 package io.github.some_example_name.model;
 
-public class Tool {
+public class Ingredient {
     private final int id;
     private final String nome;
-    private final int hierarquia;
 
-    public Tool(int id, String nome, int hierarquia) {
+    public Ingredient(int id, String nome) {
         this.id = id;
         this.nome = nome;
-        this.hierarquia = hierarquia;
     }
 
     public int getId() { return id; }
     public String getNome() { return nome; }
-    public int getHierarquia() { return hierarquia; }
+
+    @Override
+    public String toString() {
+        return nome;
+    }
 }
