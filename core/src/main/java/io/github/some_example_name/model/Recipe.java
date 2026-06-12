@@ -1,13 +1,22 @@
 package io.github.some_example_name.model;
 
-import java.util.ArrayList;
+import java.util.List;
 
+public class Recipe extends Ingredient {
+    private final int xpReward;
+    private final List<Ingredient> ingredientes;
 
-public class Recipe{
-    private int id;
-    private String name;
-    private ArrayList<RecipeIngredients> ingredients;
-    private int xp;
+    public Recipe(int id, String nome, int xpReward, List<Ingredient> ingredientes) {
+        super(id, nome);
+        this.xpReward = xpReward;
+        this.ingredientes = ingredientes;
+    }
 
-    
+    public int getXpReward() { 
+        return xpReward; 
+    }
+
+    public List<Ingredient> getIngredientes() { 
+        return ingredientes; 
+    }
 }
