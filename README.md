@@ -25,5 +25,12 @@ Agora, devo usar o Claude para ter um direcionamento sobre como iniciar o projet
 - Dia 01/06, 16:40: decidimos colocar o nome do bonequinho da sprite que o Gabriel pegou de Alfredo. (João)
 - Dia 01/06, 18:00: vimos algumas sprites promissoras com um boneco golpeando com espada, achamos que, se editarmos o arquivo num editor de pixels, podemos mudar essa espada para as nossas ferramentas. (João)
 - Dia 06/06: depois de pensarmos sobre, conseguimos chegar num esquema de como vai ser o jogo e os objetos que iremos usar (10 plantas, 5 ferramentas e 15 receitas). As plantas vão ter o estado de aguardar ferramenta, crescendo e pronta pra colher, e as ferramentas vão ser divididas entre as que são usadas antes e depois do plantio. (João)
+
 - Dia 07/06: entre os objetos que estou fazendo, tem alguns que podem ser tanto itens para venda quanto ingredientes (ex.: farinha), então estou em dúvida no que eu faço. (João)
 - Dia 10/06: resolvi usar enums para ser como uma lista de quais nomes ão ingredientes, quais são receita e por aí vai, acredito q por agora é uma solução boa. (João)
+- Dia 10/06: O Claude.AI me deu algumas possíveis soluções para os problemas com colisões que estava enfrentando usando o Tiled. Removi todas as anteriores e tentarei arrumar (Gabriel)
+
+- Dia 12/06: Criei um contador de colisões que mostra quantas foram carregadas no terminal, para testes. (Gabriel)
+- Dia 12/06: Importei uma biblioteca que permite a escrita de caracteres na tela do jogo para rastrear a posição do jogador e encontrar um ponto de spawn dentro do cenário. (Gabriel)
+- Dia 12/06: Alterei o ponto de spawn do jogador. (Gabriel)
+- Dia 12/06: Criei um novo diretório no libGDX sem as extensões desnecessárias que davam conflito ao tentar rodar o jogo via web. O projeto rodou sem erros, mas não consegui abrir o jogo de fato, nem gerar arquivos. Irei aprender como prosseguir daqui. (Gabriel)

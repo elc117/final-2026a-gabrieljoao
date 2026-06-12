@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapLayer;
@@ -17,7 +18,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Array; //Permite display de fonte na tela (descobrir posição do jogador)
 
 public class GameScreen implements Screen {
 
@@ -63,6 +64,8 @@ public class GameScreen implements Screen {
     private float stateTime = 0f;
     private boolean movendo  = false;
 
+    //Variável para exibir texto na tela (descobrir posição do jogador)
+    private BitmapFont font;
     // ─────────────────────────────────────────────────────────
     @Override
     public void show() {
@@ -70,6 +73,9 @@ public class GameScreen implements Screen {
         camera.setToOrtho(false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
 
         batch = new SpriteBatch();
+
+        //Inicializa fonte para exibir a posição do jogador na tela
+        font = new BitmapFont();
 
         // ── Carrega o mapa ──
         mapa         = new TmxMapLoader().load("Exterior.tmx");
@@ -96,8 +102,8 @@ public class GameScreen implements Screen {
         animAtual = animDown;
 
         // ── Posição inicial e hitbox ──
-        playerX = mapWidth  / 690f;
-        playerY = mapHeight / 140f;
+        playerX = 722f;
+        playerY = 151f;
         hitboxPlayer = new Rectangle(playerX, playerY, HITBOX_W, HITBOX_H);
     }
 
@@ -218,6 +224,8 @@ public class GameScreen implements Screen {
                 FRAME_WIDTH  * escala,
                 FRAME_HEIGHT * escala
             );
+            // Exibe a posição do jogador para testes
+            font.draw(batch, "X:" + (int)playerX + " Y:" + (int)playerY, playerX - 40, playerY + 30);
         batch.end();
     }
 
