@@ -19,24 +19,4 @@ public class Plant extends Ingredient {
     public List<Tool> getFerramentasNecessarias() { 
         return ferramentasNecessarias; 
     }
-
-    public Ingredient trigo(){
-        return new Ingredient(1, "TRIGO", );
-    }
-
-    public Ingredient cana(){
-        return new Ingredient(2, "CANA");
-    }
-
-    public Ingredient morango(){
-        return new Ingredient(3, "MORANGO");
-    }
-
-    public Ingredient abobora(){
-        return new Ingredient(4, "ABOBORA");
-    }
-
-    public Ingredient tomate(){
-        return new Ingredient(5, "TOMATE");
-    }
 }
