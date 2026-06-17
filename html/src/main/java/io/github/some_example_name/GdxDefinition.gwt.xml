@@ -10,41 +10,7 @@
 
   <!-- "Inherits" lines are how GWT knows where to look for code and configuration in other projects or libraries. -->
   <inherits name="com.badlogic.gdx.backends.gdx_backends_gwt" />
-  <inherits name="Box2DLights" />
-  <inherits name="HyperLap2D" />
-  <inherits name="HyperLap2D.spine" />
-  <inherits name="com.artemis.backends.artemis_backends_gwt" />
-  <inherits name="com.badlogic.ashley_gwt" />
-  <inherits name="com.badlogic.gdx.ai" />
-  <inherits name="com.badlogic.gdx.controllers" />
-  <inherits name="com.badlogic.gdx.controllers.controllers-gwt" />
-  <inherits name="com.badlogic.gdx.physics.box2d.box2d-gwt" />
-  <inherits name="com.crashinvaders.basisu.BasisuGdxGwt" />
-  <inherits name="com.esotericsoftware.spine" />
-  <inherits name="com.github.czyzby.autumn.gwt.GdxAutumnGwt" />
-  <inherits name="com.github.czyzby.autumn.mvc.GdxAutumnMvc" />
-  <inherits name="com.github.czyzby.kiwi.GdxKiwi" />
-  <inherits name="com.github.czyzby.lml.GdxLml" />
-  <inherits name="com.github.raeleus.gamejoltapi" />
-  <inherits name="com.github.tommyettinger.anim8" />
-  <inherits name="com.github.tommyettinger.colorful.colorful" />
-  <inherits name="com.github.tommyettinger.cringe" />
-  <inherits name="com.github.tommyettinger.crux" />
-  <inherits name="com.github.tommyettinger.digital" />
-  <inherits name="com.github.tommyettinger.funderby" />
-  <inherits name="com.github.tommyettinger.jdkgdxds" />
-  <inherits name="com.github.tommyettinger.juniper" />
-  <inherits name="com.github.tommyettinger.textratypist" />
-  <inherits name="com.github.yellowstonegames.squidcore" />
-  <inherits name="com.github.yellowstonegames.squidgrid" />
-  <inherits name="com.kotcrab.vis.vis-ui" />
-  <inherits name="com.ray3k.stripe" />
-  <inherits name="de.golfgl.gdx.controllers.controller_scene2d" />
-  <inherits name="dev.lyze.tinyvg" />
   <inherits name="io.github.some_example_name.Main" />
-  <inherits name="jsr305" />
-  <inherits name="regexodus.regexodus" />
-  <inherits name="space.earlygrey.shapedrawer" />
 
   <!-- You must change this if you rename packages later, or rename GwtLauncher. -->
   <entry-point class="io.github.some_example_name.gwt.GwtLauncher" />
