@@ -19,4 +19,7 @@ public class Plant extends Ingredient {
     public List<Tool> getFerramentasNecessarias() { 
         return ferramentasNecessarias; 
     }
+
+    //será que eu consigo dar commit assim?
+    
 }
