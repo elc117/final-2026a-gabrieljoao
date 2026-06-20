@@ -6,7 +6,7 @@ public enum PlantGrowth {
 
     CREEPING(10f),
 
-    SHRUB(15f),
+    BUSH(15f),
 
     SUPPORT(30f),
 

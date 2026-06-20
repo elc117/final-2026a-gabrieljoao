@@ -2,18 +2,20 @@ package io.github.some_example_name.model;
 
 import java.util.List;
 
+import io.github.some_example_name.enums.PlantGrowth;
+
 public class Plant extends Ingredient {
-    private final int tempoDeCrescimento;
+    private final PlantGrowth tempoDeCrescimento;
     private final List<Tool> ferramentasNecessarias;
 
-    public Plant(int id, String nome, int tempoDeCrescimento, List<Tool> ferramentasNecessarias) {
+    public Plant(int id, String nome, PlantGrowth tempoDeCrescimento, List<Tool> ferramentasNecessarias) {
         super(id, nome);
         this.tempoDeCrescimento = tempoDeCrescimento;
         this.ferramentasNecessarias = ferramentasNecessarias;
     }
 
-    public int getTempoDeCrescimento() { 
-        return tempoDeCrescimento; 
+    public float getTempoDeCrescimento() { 
+        return tempoDeCrescimento.growthTimeSeconds; 
     }
 
     public List<Tool> getFerramentasNecessarias() { 
