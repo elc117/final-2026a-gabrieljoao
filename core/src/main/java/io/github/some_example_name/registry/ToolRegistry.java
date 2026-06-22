@@ -6,11 +6,11 @@ import io.github.some_example_name.model.Tool;
 
 public class ToolRegistry {
 
-    public final Tool enxada   = new Tool(1, "ENXADA",   2);
-    public final Tool rasteira = new Tool(2, "RASTEIRA",  4);
-    public final Tool suporte  = new Tool(3, "SUPORTE",   5);
-    public final Tool adubo    = new Tool(4, "ADUBO",     3);
-    public final Tool pa       = new Tool(5, "PA",        1);
+    public final Tool enxada   = new Tool(26, "ENXADA",   2);
+    public final Tool rasteira = new Tool(27, "RASTEIRA",  4);
+    public final Tool suporte  = new Tool(28, "SUPORTE",   5);
+    public final Tool adubo    = new Tool(29, "ADUBO",     3);
+    public final Tool pa       = new Tool(30, "PA",        1);
 
     public final List<Tool> trigoTools   = List.of(enxada);
     public final List<Tool> canaTools    = List.of(enxada);

@@ -24,6 +24,10 @@ public class PlantInstance{
 
         timerSegundos += delta;
 
+        if ((plant.getTempoDeCrescimento())/2 == timerSegundos){
+            state = PlantState.PEDINDO_AGUA;
+        }
+
         if (timerSegundos >= plant.getTempoDeCrescimento()) {
             state = PlantState.PRONTA;
         }

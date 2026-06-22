@@ -35,3 +35,6 @@ Agora, devo usar o Claude para ter um direcionamento sobre como iniciar o projet
 - Dia 12/06: Alterei o ponto de spawn do jogador. (Gabriel)
 - Dia 12/06: Criei um novo diretório no libGDX sem as extensões desnecessárias que davam conflito ao tentar rodar o jogo via web. O projeto rodou sem erros, mas não consegui abrir o jogo de fato, nem gerar arquivos. Irei aprender como prosseguir daqui. (Gabriel)
 - Dia 12/06: Terminei a lógica das classes e criei uma pasta registry com criação de objetos, acredito que a partir daí conseguimos mexer neles dentro do jogo. (João)
+
+
+
