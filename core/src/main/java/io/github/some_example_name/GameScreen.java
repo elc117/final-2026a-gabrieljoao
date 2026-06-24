@@ -1,37 +1,40 @@
 package io.github.some_example_name;
 
-import java.util.ArrayList; //Interface para telas do jogo
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map; // Desenha formas (hitbox de colisão)
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation; // Desenha formas (hitbox de colisão)
-import com.badlogic.gdx.graphics.g2d.BitmapFont; //Representa uma camada genérica do Tiled
-import com.badlogic.gdx.graphics.g2d.SpriteBatch; // Representa objetos genéricos do Tiled
-import com.badlogic.gdx.graphics.g2d.TextureRegion; // Representa objetos retangulares do Tiled (colisões)
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer; // Representa o mapa carregado do Tiled
-import com.badlogic.gdx.maps.MapLayer; // Obtém dimensões do mapa
-import com.badlogic.gdx.maps.MapObject; // Carrega o tmx do tiled
-import com.badlogic.gdx.maps.objects.RectangleMapObject; //Permite display de fonte na tela (descobrir posição do jogador)
-import com.badlogic.gdx.maps.tiled.TiledMap; //imports para visualizar a hitbox de colisões (testes)
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer; //Lista dinâmica do libGDX. Para armazenar as colisões do mapa
+import com.badlogic.gdx.Gdx; //Representa uma camada genérica do Tiled
+import com.badlogic.gdx.Input; // Representa objetos genéricos do Tiled
+import com.badlogic.gdx.Screen; // Representa objetos retangulares do Tiled (colisões)
+import com.badlogic.gdx.graphics.Color; // Representa o mapa carregado do Tiled
+import com.badlogic.gdx.graphics.GL20; // Obtém dimensões do mapa
+import com.badlogic.gdx.graphics.OrthographicCamera; // Carrega o tmx do tiled
+import com.badlogic.gdx.graphics.Texture; //Permite display de fonte na tela (descobrir posição do jogador)
+import com.badlogic.gdx.graphics.g2d.Animation; //imports para visualizar a hitbox de colisões (testes)
+import com.badlogic.gdx.graphics.g2d.BitmapFont; //Lista dinâmica do libGDX. Para armazenar as colisões do mapa
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.objects.RectangleMapObject;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Array; // Ler entradas do teclado
 
-import io.github.some_example_name.enums.IngredientId;
+import io.github.some_example_name.enums.IngredientId; //Interface para telas do jogo
+import io.github.some_example_name.enums.PlantState;
 import io.github.some_example_name.model.Bag;
 import io.github.some_example_name.model.Plant;
 import io.github.some_example_name.model.Recipe;
 import io.github.some_example_name.model.User;
 import io.github.some_example_name.registry.PlantRegistry;
-import io.github.some_example_name.registry.RecipeRegistry; // Ler entradas do teclado
+import io.github.some_example_name.registry.RecipeRegistry;
 
 public class GameScreen implements Screen {
 
@@ -101,6 +104,9 @@ public class GameScreen implements Screen {
     // Horta
     private List<TileHorta> tilesHorta = new ArrayList<>();
     private Texture spriteTerraNormal, spriteTerraArada, spriteTerraSemeada, spriteTerraMolhada, spriteTerraPronta;
+    private Map<IngredientId, Texture> spritesSemeadas = new HashMap<>();
+    private Map<IngredientId, Texture> spritesMolhadas = new HashMap<>();
+    private Map<IngredientId, Texture> spritesProntas = new HashMap<>();
 
     private PlantRegistry plantRegistry;
     private Bag bag;
@@ -192,6 +198,8 @@ public class GameScreen implements Screen {
             IngredientId.LARANJA,
             IngredientId.UVA,
         };
+
+        carregarSpritesEspecificosDasPlantas();
 
         // Spritesheets
         sheetDown = new Texture("Walk_Down.png");
@@ -378,6 +386,86 @@ public class GameScreen implements Screen {
 
         Gdx.app.log("UI", "Asset não encontrado: " + nomeArquivo);
         return null;
+    }
+
+    private void carregarSpritesEspecificosDasPlantas() {
+        for (IngredientId plantaId : itensBagPorOrdem) {
+            Texture semeada = carregarSpriteDePlanta(plantaId, "semeada");
+            Texture molhada = carregarSpriteDePlanta(plantaId, "molhada");
+            Texture pronta = carregarSpriteDePlanta(plantaId, "pronta");
+
+            if (semeada != null) {
+                spritesSemeadas.put(plantaId, semeada);
+            }
+            if (molhada != null) {
+                spritesMolhadas.put(plantaId, molhada);
+            }
+            if (pronta != null) {
+                spritesProntas.put(plantaId, pronta);
+            }
+        }
+    }
+
+    private Texture carregarSpriteDePlanta(
+        IngredientId plantaId,
+        String estado
+    ) {
+        String nomeBase = plantaId.name().toLowerCase();
+        String[] candidatos = new String[] {
+            "terra_" + estado + "_" + nomeBase + ".png",
+            nomeBase + "_" + estado + ".png",
+            nomeBase + "_planta_" + estado + ".png",
+            "planta_" + nomeBase + "_" + estado + ".png",
+        };
+
+        for (String candidato : candidatos) {
+            if (Gdx.files.internal(candidato).exists()) {
+                return new Texture(candidato);
+            }
+        }
+
+        Gdx.app.log(
+            "Horta",
+            "Sprite específico não encontrado para " +
+                plantaId +
+                " (" +
+                estado +
+                ")"
+        );
+        return null;
+    }
+
+    private Texture obterSpriteDaPlanta(TileHorta tile) {
+        if (tile.getEstadoTile() == TileHorta.EstadoTile.NORMAL) {
+            return spriteTerraNormal;
+        }
+
+        if (tile.getEstadoTile() == TileHorta.EstadoTile.ARADA) {
+            return spriteTerraArada;
+        }
+
+        if (tile.getPlanta() == null) {
+            return spriteTerraNormal;
+        }
+
+        IngredientId plantaId = tile.getPlanta().getPlant().getId();
+        PlantState estadoPlanta = tile.getPlanta().getState();
+
+        switch (estadoPlanta) {
+            case PEDINDO_AGUA:
+                return spritesSemeadas.getOrDefault(
+                    plantaId,
+                    spriteTerraSemeada
+                );
+            case PRONTA:
+                return spritesProntas.getOrDefault(plantaId, spriteTerraPronta);
+            case PLANTADA:
+            default:
+                return spritesMolhadas.getOrDefault(
+                    plantaId,
+                    spriteTerraMolhada
+                );
+        }
     }
 
     private void abrirMenuBag() {
@@ -761,13 +849,13 @@ public class GameScreen implements Screen {
         // Desenha tiles da horta (no exterior)
         if (!dentroDaCasa) {
             for (TileHorta tile : tilesHorta) {
-                tile.desenhar(
-                    batch,
-                    spriteTerraNormal,
-                    spriteTerraArada,
-                    spriteTerraSemeada,
-                    spriteTerraMolhada,
-                    spriteTerraPronta
+                Texture spriteTile = obterSpriteDaPlanta(tile);
+                batch.draw(
+                    spriteTile,
+                    tile.area.x,
+                    tile.area.y,
+                    tile.area.width,
+                    tile.area.height
                 );
             }
         }
@@ -846,6 +934,17 @@ public class GameScreen implements Screen {
         spriteTerraSemeada.dispose();
         spriteTerraMolhada.dispose();
         spriteTerraPronta.dispose();
+
+        for (Texture texture : spritesSemeadas.values()) {
+            texture.dispose();
+        }
+        for (Texture texture : spritesMolhadas.values()) {
+            texture.dispose();
+        }
+        for (Texture texture : spritesProntas.values()) {
+            texture.dispose();
+        }
+
         font.dispose();
 
         if (menuReceitasTexture != null) {
