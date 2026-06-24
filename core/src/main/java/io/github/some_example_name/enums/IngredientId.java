@@ -18,17 +18,17 @@ public enum IngredientId {
     PAO(12),
     ACUCAR(13),
     GELEIA_DE_MORANGO(14),
-    GELEIA_DE_ABOBORA(15),
-    TORTA_DE_ABOBORA(16),
-    MOLHO_DE_TOMATE(17),
-    SANDUICHE(18),
-    CREME_DE_AMENDOIM(19),
-    SANDUICHE_AMERICANO(20),
-    SUCO_DE_LARANJA(21),
-    TORTA_DE_MACA(22),
-    SALADA_DE_FRUTAS(23),
-    ALCOOL(24),
-    VINHO(25);
+    
+    TORTA_DE_ABOBORA(15),
+    
+    SANDUICHE(16),
+    
+    SANDUICHE_AMERICANO(17),
+    SUCO_DE_LARANJA(18),
+    TORTA_DE_MACA(19),
+    
+   
+    VINHO(20);
 
     public final int value;
 

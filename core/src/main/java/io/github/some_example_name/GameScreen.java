@@ -33,6 +33,10 @@ public class GameScreen implements Screen {
 
     // VARIAVEIS E CONSTANTES DO JOGO
 
+    private boolean musicaTocando = true;
+    private static final float BTN_W = 50f;
+    private static final float BTN_H = 14f;
+
     private ShapeRenderer shapes; //Desenha formas
 
     // Câmera e renderização
