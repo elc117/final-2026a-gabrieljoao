@@ -11,7 +11,7 @@ public enum Level {
     NIVEL_6  (6,  160,  List.of(IngredientId.ALFACE),   List.of(IngredientId.SANDUICHE)),
     NIVEL_7  (7,  320,  List.of(IngredientId.AMENDOIM), List.of(IngredientId.SANDUICHE_AMERICANO)),
     NIVEL_8  (8,  640,  List.of(IngredientId.MACA),     List.of(IngredientId.TORTA_DE_MACA)),
-    NIVEL_9  (9,  800,  List.of(IngredientId.LARANJA),  List.of(IngredientId.ALCOOL)),
+    NIVEL_9  (9,  800,  List.of(IngredientId.LARANJA),  List.of()),
     NIVEL_10 (10, 1000, List.of(IngredientId.UVA),      List.of(IngredientId.VINHO));
 
     public final int numero;
