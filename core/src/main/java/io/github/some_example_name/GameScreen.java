@@ -90,6 +90,10 @@ public class GameScreen implements Screen {
     private boolean dentroDaCasa = false;
     private boolean podeInteragir = false;
 
+    // Zona de interação com os armários
+    private Rectangle abrirMenuReceitas;
+    private boolean podeAbrirReceitas = false;
+
     // Horta
     private List <TileHorta> tilesHorta = new ArrayList<>();
     private Texture spriteTerraNormal, spriteTerraArada, spriteTerraSemeada, spriteTerraMolhada, spriteTerraPronta;
@@ -247,8 +251,11 @@ public class GameScreen implements Screen {
     colisoes.add(new Rectangle(259, 167, 39, 13)); // estante de vendas
     colisoes.add(new Rectangle(287, 113, 12, 19)); // sofá
 
-    // ===== ZONA DE SAÍDA =====
+    // ZONA DE SAÍDA
     zonaSaidaCasa = new Rectangle(241f, 20f, 40f, 29f);
+
+    // ZONA DE INTERAÇÃO DAS VENDAS
+    abrirMenuReceitas = new Rectangle(250f, 154f, 47f, 21f);
     }
 
     private void entrarNaCasa() {
@@ -263,9 +270,13 @@ public class GameScreen implements Screen {
         colisoes.clear();
         carregarColisoesInterior();
 
-        playerX = 160f;
-        playerY = 70f;
+        playerX = 262f;
+        playerY = 34f;
         dentroDaCasa = true;
+    }
+
+    private void abrirMenuReceitas() {
+        Gdx.app.log("Receitas", "Menu de Receitas Aberto!");
     }
 
     private void sairDaCasa() {
@@ -373,13 +384,19 @@ public class GameScreen implements Screen {
         // Verifica se pode sair ou entrar na casa
         boolean podeEntrar = !dentroDaCasa && hitboxPlayer.overlaps(zonaEntradaCasa);
         boolean podeSair = dentroDaCasa && hitboxPlayer.overlaps(zonaSaidaCasa);
-        podeInteragir = podeEntrar || podeSair;
+        podeInteragir = podeEntrar || podeSair || podeAbrirReceitas;
+
+        podeAbrirReceitas = dentroDaCasa && hitboxPlayer.overlaps(abrirMenuReceitas);
 
         if (podeEntrar && Gdx.input.isKeyJustPressed(Input.Keys.E)) {
             entrarNaCasa();
         }
         if (podeSair && Gdx.input.isKeyJustPressed(Input.Keys.E)) {
             sairDaCasa();
+        }
+
+        if (podeAbrirReceitas && Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+            abrirMenuReceitas();
         }
         //Interação pra plantar
         if (!dentroDaCasa && Gdx.input.isKeyJustPressed(Input.Keys.E)) {

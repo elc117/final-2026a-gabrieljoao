@@ -14,7 +14,6 @@ public class User {
         this.xp = 0;
     }
 
-    /** Adiciona XP e sobe de nível automaticamente se atingir o necessário. */
     public void addXp(int quantidade) {
         xp += quantidade;
 
@@ -26,7 +25,6 @@ public class User {
         }
     }
 
-    /** Retorna true se o nível do usuário é suficiente para usar o item. */
     public boolean desbloqueou(IngredientId id) {
         for (Level l : Level.values()) {
             if (l.plantasDesbloqueadas.contains(id) || l.receitasDesbloqueadas.contains(id)) {
