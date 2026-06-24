@@ -54,6 +54,13 @@ https://github.com/user-attachments/assets/b6537723-4bfc-441e-af96-14887ba98d1b
 
 
 ------------------------------------------------------------------------
+PROPOSTA:
+A proposta consiste em um jogo 2D de vista Oblíqua.
+Haverão funcionalidades como: Ferramentas para arar o solo, regadores para regar as plantas, a ação de plantar sementes, como criar as receitas e um espaço dedicado para as vendas. O jogo, à princípio, contará com 6 níveis, sendo que a cada nível é desbloqueada uma nova semente e uma nova receita. Para passar de nível o jogador deverá obter uma quantidade x de pontos que serão adquiridos vendendo as receitas. A venda também fornece dinheiro que poderá ser utilizado para comprar itens como "adubo" e outras coisas que ajudem a plantação.,
+A proposta de "grupos" será enquadrada no projeto da seguinte maneira:
+Grupos de Colheitas: Plantas com diferentes requisitos para serem plantadas, ex: parreira, direto no solo, árvore frutífera
+Grupos de Receitas: Receitas de uma única planta, Receitas que envolvem mais de uma planta ou outras receitas prévias (ex: farinha de trigo, geleia de uva, pão com geleia de uva)
+------------------------------------------------------------------------
 **Diagrama de Classes**
 
 
