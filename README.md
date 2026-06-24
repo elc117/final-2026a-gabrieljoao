@@ -38,5 +38,11 @@ Agora, devo usar o Claude para ter um direcionamento sobre como iniciar o projet
 - Dia 22/06: Criei uma bag para guardar os itens, ajudei o gabriel a achar umas sprites, achamos melhor não fazer as ferramentas no jogo por logística e por sprites e animações faltando. (João)
 - Dia 23/06: tava em dúvida se usava a bag ou o recipeRegistry para craftar as receitas mas o Claude me explicou que fica mais padronizado ser pelo recipeRegistry, tava dando erro de tipos mas consegui ver e pelo visto a bag não estava atualizada para receber do enum IngredientId o id de cada objeto (que eu fiz isso ontem de criar esse enum), ainda vou esperar para ter uma maior integração com os gráficos e lógica de movimentação e escolhas para ver se eu adiciono ou até apago algumas lógicas ou até enums que eu já tinha colocado. (João)
 
+Período de inatividade em função daquele bug com o Github e problemas com diretórios, tanto comigo quanto com o João Daniel (Gabriel)
+
+- Dia 19/06: Fiz alterações no Tiled para ter um cercado e área própria para a plantação. Também adicionei interatividade para que o player consiga plantar arar a terra, plantar, regar, crescer e colher a planta manualmente (Gabriel) 
+- Dia 23/06: Adicionei uma mecânica que a planta vai para um estágio pedindo água automáticamente, e após regada, vai para o estágio de pronta também automáticamente, assim que passar o tempo mínimo (Gabriel)
+- Dia 24/06: Adicionando as funcionalidades para o Menu de fazer receitas, XP e alteração dos sprites das plantas. Usando bastante o Claude para me auxiliar com as funcionalidades para a sobreposição do menu. Os - sprites das plantas e a Arte do Menu foram feitos via ChatGPT (Gabriel)
+
 
 
