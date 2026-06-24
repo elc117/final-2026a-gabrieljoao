@@ -44,6 +44,13 @@ Período de inatividade em função daquele bug com o Github e problemas com dir
 - Dia 19/06: Fiz alterações no Tiled para ter um cercado e área própria para a plantação. Também adicionei interatividade para que o player consiga plantar arar a terra, plantar, regar, crescer e colher a planta manualmente (Gabriel) 
 - Dia 23/06: Adicionei uma mecânica que a planta vai para um estágio pedindo água automáticamente, e após regada, vai para o estágio de pronta também automáticamente, assim que passar o tempo mínimo (Gabriel)
 - Dia 24/06: Adicionando as funcionalidades para o Menu de fazer receitas, XP e alteração dos sprites das plantas. Usando bastante o Claude para me auxiliar com as funcionalidades para a sobreposição do menu. Os - sprites das plantas e a Arte do Menu foram feitos via ChatGPT (Gabriel)
+- 24/06: Sprites de plantas trocados. Os menus estão funcionais e a música do jogo funciona, mas precisa esperar um tempo para carregar
+
+  AVISO IMPORTANTE!!!!! 
+  RODAR APENAS USANDO O HTML. Localmente o jogo fica travado, não entendemos o motivo ainda.
+
+
+https://github.com/user-attachments/assets/b6537723-4bfc-441e-af96-14887ba98d1b
 
 
 ------------------------------------------------------------------------
