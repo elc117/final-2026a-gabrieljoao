@@ -1,27 +1,27 @@
 package io.github.some_example_name;
 
-import java.util.ArrayList;
-import java.util.List; // Ler entradas do teclado
+import java.util.ArrayList; //Interface para telas do jogo
+import java.util.List;
 
-import com.badlogic.gdx.Gdx; //Interface para telas do jogo
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch; // Desenha formas (hitbox de colisão)
-import com.badlogic.gdx.graphics.g2d.TextureRegion; //Representa uma camada genérica do Tiled
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer; // Representa objetos genéricos do Tiled
-import com.badlogic.gdx.maps.MapLayer; // Representa objetos retangulares do Tiled (colisões)
-import com.badlogic.gdx.maps.MapObject; // Representa o mapa carregado do Tiled
-import com.badlogic.gdx.maps.objects.RectangleMapObject; // Obtém dimensões do mapa
-import com.badlogic.gdx.maps.tiled.TiledMap; // Carrega o tmx do tiled
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer; //Permite display de fonte na tela (descobrir posição do jogador)
-import com.badlogic.gdx.maps.tiled.TmxMapLoader; //imports para visualizar a hitbox de colisões (testes)
-import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer; //Lista dinâmica do libGDX. Para armazenar as colisões do mapa
+import com.badlogic.gdx.graphics.g2d.Animation; // Desenha formas (hitbox de colisão)
+import com.badlogic.gdx.graphics.g2d.BitmapFont; //Representa uma camada genérica do Tiled
+import com.badlogic.gdx.graphics.g2d.SpriteBatch; // Representa objetos genéricos do Tiled
+import com.badlogic.gdx.graphics.g2d.TextureRegion; // Representa objetos retangulares do Tiled (colisões)
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer; // Representa o mapa carregado do Tiled
+import com.badlogic.gdx.maps.MapLayer; // Obtém dimensões do mapa
+import com.badlogic.gdx.maps.MapObject; // Carrega o tmx do tiled
+import com.badlogic.gdx.maps.objects.RectangleMapObject; //Permite display de fonte na tela (descobrir posição do jogador)
+import com.badlogic.gdx.maps.tiled.TiledMap; //imports para visualizar a hitbox de colisões (testes)
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer; //Lista dinâmica do libGDX. Para armazenar as colisões do mapa
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 
@@ -31,7 +31,7 @@ import io.github.some_example_name.model.Plant;
 import io.github.some_example_name.model.Recipe;
 import io.github.some_example_name.model.User;
 import io.github.some_example_name.registry.PlantRegistry;
-import io.github.some_example_name.registry.RecipeRegistry;
+import io.github.some_example_name.registry.RecipeRegistry; // Ler entradas do teclado
 
 public class GameScreen implements Screen {
 
@@ -48,7 +48,7 @@ public class GameScreen implements Screen {
     private SpriteBatch batch;
 
     // Viewport (controla o zoom)
-    private static final float VIEWPORT_WIDTH  = 320f;
+    private static final float VIEWPORT_WIDTH = 320f;
     private static final float VIEWPORT_HEIGHT = 240f;
 
     // Tiled Map
@@ -65,9 +65,9 @@ public class GameScreen implements Screen {
     private Animation<TextureRegion> animAtual;
 
     // Dimensões do frame
-    private static final int FRAME_COLS     = 12;
-    private static final int FRAME_WIDTH    = 24;
-    private static final int FRAME_HEIGHT   = 24;
+    private static final int FRAME_COLS = 12;
+    private static final int FRAME_WIDTH = 24;
+    private static final int FRAME_HEIGHT = 24;
     private static final float FRAME_DURATION = 0.1f;
 
     // Hitbox do personagem
@@ -83,7 +83,7 @@ public class GameScreen implements Screen {
 
     // Controle de animação
     private float stateTime = 0f;
-    private boolean movendo  = false;
+    private boolean movendo = false;
 
     //Variável para exibir texto na tela (descobrir posição do jogador)
     private BitmapFont font;
@@ -99,24 +99,26 @@ public class GameScreen implements Screen {
     private boolean podeAbrirReceitas = false;
 
     // Horta
-    private List <TileHorta> tilesHorta = new ArrayList<>();
+    private List<TileHorta> tilesHorta = new ArrayList<>();
     private Texture spriteTerraNormal, spriteTerraArada, spriteTerraSemeada, spriteTerraMolhada, spriteTerraPronta;
-    
+
     private PlantRegistry plantRegistry;
     private Bag bag;
     private Plant plantaSelecionada; //Escolhe a planta que vai plantar (0 - 9)
 
     // Sistema de crafting/menu de vendas
     private Texture menuReceitasTexture;
+    private Texture menuBagTexture;
     private RecipeRegistry recipeRegistry;
     private User user;
     private boolean menuReceitasAberto = false;
+    private boolean menuBagAberto = false;
 
     // Mapeamento de teclas 0-9 → receita correspondente (na ordem do Menu.png)
     private IngredientId[] receitasPorTecla;
+    private IngredientId[] itensBagPorOrdem;
 
     //==============================================================
-
 
     //FUNÇÕES DO CICLO DE VIDA DO JOGO
 
@@ -134,24 +136,23 @@ public class GameScreen implements Screen {
         font = new BitmapFont();
 
         // Carrega o Mapa
-        mapa         = new TmxMapLoader().load("Exterior.tmx");
+        mapa = new TmxMapLoader().load("Exterior.tmx");
         mapaRenderer = new OrthogonalTiledMapRenderer(mapa, ESCALA_MAPA);
 
         // Dimensões do mapa
         TiledMapTileLayer camada = (TiledMapTileLayer) mapa.getLayers().get(0);
-        mapWidth  = camada.getWidth()  * camada.getTileWidth();
+        mapWidth = camada.getWidth() * camada.getTileWidth();
         mapHeight = camada.getHeight() * camada.getTileHeight();
 
-        
         criarColisoesManuais(); // Cria colisões manuais, sem usar o tiled
         zonaEntradaCasa = new Rectangle(710f, 152f, 18f, 14f); // Cria zona de interação na frente da casa
 
         // Carrega sprites da horta
-        spriteTerraNormal  = new Texture("terra_normal.png");
-        spriteTerraArada   = new Texture("terra_arada.png");
+        spriteTerraNormal = new Texture("terra_normal.png");
+        spriteTerraArada = new Texture("terra_arada.png");
         spriteTerraSemeada = new Texture("terra_semeada.png");
         spriteTerraMolhada = new Texture("terra_molhada.png");
-        spriteTerraPronta  = new Texture("terra_pronta.png");
+        spriteTerraPronta = new Texture("terra_pronta.png");
 
         // Cria a grade de tiles plantáveis (9 cols x 6 linhas, 16px cada)
         criarHorta(389f, 200f, 9, 6, 16f);
@@ -159,11 +160,12 @@ public class GameScreen implements Screen {
 
         //Planta padrão é trigo
         plantaSelecionada = plantRegistry.trigo;
-        bag = new Bag(); 
+        bag = new Bag();
 
         recipeRegistry = new RecipeRegistry();
         user = new User("Jogador");
-        menuReceitasTexture = new Texture("Menu.png");
+        menuReceitasTexture = carregarTextureOpcional("Menu.png");
+        menuBagTexture = carregarTextureOpcional("BagMenu.png");
 
         receitasPorTecla = new IngredientId[] {
             IngredientId.FARINHA,
@@ -175,19 +177,31 @@ public class GameScreen implements Screen {
             IngredientId.SANDUICHE_AMERICANO,
             IngredientId.TORTA_DE_MACA,
             IngredientId.VINHO,
-            IngredientId.SUCO_DE_LARANJA
+            IngredientId.SUCO_DE_LARANJA,
         };
 
+        itensBagPorOrdem = new IngredientId[] {
+            IngredientId.TRIGO,
+            IngredientId.CANA,
+            IngredientId.MORANGO,
+            IngredientId.ABOBORA,
+            IngredientId.TOMATE,
+            IngredientId.ALFACE,
+            IngredientId.AMENDOIM,
+            IngredientId.MACA,
+            IngredientId.LARANJA,
+            IngredientId.UVA,
+        };
 
         // Spritesheets
-        sheetDown  = new Texture("Walk_Down.png");
-        sheetUp    = new Texture("Walk_Up.png");
-        sheetLeft  = new Texture("Walk_Left.png");
+        sheetDown = new Texture("Walk_Down.png");
+        sheetUp = new Texture("Walk_Up.png");
+        sheetLeft = new Texture("Walk_Left.png");
         sheetRight = new Texture("Walk_Right.png");
 
-        animDown  = criarAnimacao(sheetDown);
-        animUp    = criarAnimacao(sheetUp);
-        animLeft  = criarAnimacao(sheetLeft);
+        animDown = criarAnimacao(sheetDown);
+        animUp = criarAnimacao(sheetUp);
+        animLeft = criarAnimacao(sheetLeft);
         animRight = criarAnimacao(sheetRight);
         animAtual = animDown;
 
@@ -197,15 +211,21 @@ public class GameScreen implements Screen {
         hitboxPlayer = new Rectangle(playerX, playerY, HITBOX_W, HITBOX_H);
     }
 
-    private void criarHorta(float originX, float originY, int cols, int rows, float tamanhoTile) {
+    private void criarHorta(
+        float originX,
+        float originY,
+        int cols,
+        int rows,
+        float tamanhoTile
+    ) {
         for (int linha = 0; linha < rows; linha++) {
             for (int col = 0; col < cols; col++) {
-                float x = originX + col   * tamanhoTile;
+                float x = originX + col * tamanhoTile;
                 float y = originY + linha * tamanhoTile;
                 tilesHorta.add(new TileHorta(x, y, tamanhoTile));
             }
         }
-    } 
+    }
 
     // Carrega os objetos da camada "Collisions" do Tiled
     //==========================================================
@@ -223,24 +243,28 @@ public class GameScreen implements Screen {
                     // Ajusta o tamanho e posição do y(hitbox) do tiled para o personagem
 
                     float yCorrigido = mapHeight - r.y - r.height;
-                    colisoes.add(new Rectangle(r.x, yCorrigido, r.width, r.height));
+                    colisoes.add(
+                        new Rectangle(r.x, yCorrigido, r.width, r.height)
+                    );
                 }
             }
         }
         // Contador de colisões, para testes.
-        Gdx.app.log("Colisoes", "Total de colisoes carregadas: " + colisoes.size);
+        Gdx.app.log(
+            "Colisoes",
+            "Total de colisoes carregadas: " + colisoes.size
+        );
     }
 
     // Cria colisões via libGDX
     //==========================================================
-     private void criarColisoesManuais() {
-
+    private void criarColisoesManuais() {
         // Cercas ao redor da casa
         colisoes.add(new Rectangle(588f, 107f, 118f, 8f)); // Inferior esquerda
-        colisoes.add(new Rectangle(584f, 104f, 7f,   137f)); // Esquerda (vertical)
+        colisoes.add(new Rectangle(584f, 104f, 7f, 137f)); // Esquerda (vertical)
         colisoes.add(new Rectangle(584f, 233f, 204f, 8f)); // Superior
-        colisoes.add(new Rectangle(787f, 113f, 6f,   120f)); // Direita (vertical)
-        colisoes.add(new Rectangle(733f, 105f, 58f,  8f)); // Inferior direita
+        colisoes.add(new Rectangle(787f, 113f, 6f, 120f)); // Direita (vertical)
+        colisoes.add(new Rectangle(733f, 105f, 58f, 8f)); // Inferior direita
 
         colisoes.add(new Rectangle(620f, 160f, 130f, 70f)); //Casa
 
@@ -265,28 +289,28 @@ public class GameScreen implements Screen {
         // Cercas da Horta
         colisoes.add(new Rectangle(389f, 184f, 38f, 9f)); // inferior esquerda
         colisoes.add(new Rectangle(486f, 184f, 47f, 9f)); // inferior direita
-        colisoes.add(new Rectangle(530f, 193f, 6f,  137f)); // lateral direita
+        colisoes.add(new Rectangle(530f, 193f, 6f, 137f)); // lateral direita
     }
 
     private void carregarColisoesInterior() {
-    // Paredes
-    colisoes.add(new Rectangle(0,   176, 320, 64));  // parede superior
-    colisoes.add(new Rectangle(0, 0, 314, 18)); // parede inferior
-    colisoes.add(new Rectangle(0,   8,  16,  208)); // parede esquerda
-    colisoes.add(new Rectangle(306, 0, 8, 180)); // parede direita
-    colisoes.add(new Rectangle(91, 122, 24, 53)); // divisória do quarto
+        // Paredes
+        colisoes.add(new Rectangle(0, 176, 320, 64)); // parede superior
+        colisoes.add(new Rectangle(0, 0, 314, 18)); // parede inferior
+        colisoes.add(new Rectangle(0, 8, 16, 208)); // parede esquerda
+        colisoes.add(new Rectangle(306, 0, 8, 180)); // parede direita
+        colisoes.add(new Rectangle(91, 122, 24, 53)); // divisória do quarto
 
-    // Móveis
-    colisoes.add(new Rectangle(166, 85, 37, 30)); // mesa redonda
-    colisoes.add(new Rectangle(22, 28, 55, 32)); // mesas de canto
-    colisoes.add(new Rectangle(259, 167, 39, 13)); // estante de vendas
-    colisoes.add(new Rectangle(287, 113, 12, 19)); // sofá
+        // Móveis
+        colisoes.add(new Rectangle(166, 85, 37, 30)); // mesa redonda
+        colisoes.add(new Rectangle(22, 28, 55, 32)); // mesas de canto
+        colisoes.add(new Rectangle(259, 167, 39, 13)); // estante de vendas
+        colisoes.add(new Rectangle(287, 113, 12, 19)); // sofá
 
-    // ZONA DE SAÍDA
-    zonaSaidaCasa = new Rectangle(241f, 20f, 40f, 29f);
+        // ZONA DE SAÍDA
+        zonaSaidaCasa = new Rectangle(241f, 20f, 40f, 29f);
 
-    // ZONA DE INTERAÇÃO DAS VENDAS
-    abrirMenuReceitas = new Rectangle(250f, 154f, 47f, 21f);
+        // ZONA DE INTERAÇÃO DAS VENDAS
+        abrirMenuReceitas = new Rectangle(250f, 154f, 47f, 21f);
     }
 
     private void entrarNaCasa() {
@@ -307,6 +331,10 @@ public class GameScreen implements Screen {
     }
 
     private void abrirMenuReceitas() {
+        if (menuBagAberto) {
+            return;
+        }
+
         menuReceitasAberto = true;
         Gdx.app.log("Receitas", "Menu de Receitas Aberto!");
     }
@@ -332,37 +360,153 @@ public class GameScreen implements Screen {
         playerY = 145f;
         dentroDaCasa = false;
     }
-    
+
     private Animation<TextureRegion> criarAnimacao(Texture sheet) {
-        TextureRegion[][] tmp    = TextureRegion.split(sheet, FRAME_WIDTH, FRAME_HEIGHT);
-        TextureRegion[]   frames = tmp[0];
+        TextureRegion[][] tmp = TextureRegion.split(
+            sheet,
+            FRAME_WIDTH,
+            FRAME_HEIGHT
+        );
+        TextureRegion[] frames = tmp[0];
         return new Animation<>(FRAME_DURATION, frames);
+    }
+
+    private Texture carregarTextureOpcional(String nomeArquivo) {
+        if (Gdx.files.internal(nomeArquivo).exists()) {
+            return new Texture(nomeArquivo);
+        }
+
+        Gdx.app.log("UI", "Asset não encontrado: " + nomeArquivo);
+        return null;
+    }
+
+    private void abrirMenuBag() {
+        if (menuReceitasAberto) {
+            return;
+        }
+
+        menuBagAberto = true;
+        Gdx.app.log("Bag", "Menu da Bag Aberto!");
+    }
+
+    private void fecharMenuBag() {
+        menuBagAberto = false;
+        Gdx.app.log("Bag", "Menu da Bag Fechado!");
+    }
+
+    private void desenharPainelFallback(
+        float menuX,
+        float menuY,
+        float menuW,
+        float menuH
+    ) {
+        batch.end();
+
+        shapes.setProjectionMatrix(camera.combined);
+        shapes.begin(ShapeRenderer.ShapeType.Filled);
+        shapes.setColor(new Color(0.24f, 0.15f, 0.07f, 0.95f));
+        shapes.rect(menuX, menuY, menuW, menuH);
+        shapes.setColor(new Color(0.90f, 0.78f, 0.58f, 1f));
+        shapes.rect(menuX + 8f, menuY + 8f, menuW - 16f, menuH - 16f);
+        shapes.end();
+
+        shapes.begin(ShapeRenderer.ShapeType.Line);
+        shapes.setColor(new Color(0.38f, 0.22f, 0.10f, 1f));
+        shapes.rect(menuX, menuY, menuW, menuH);
+        shapes.rect(menuX + 8f, menuY + 8f, menuW - 16f, menuH - 16f);
+        shapes.end();
+
+        batch.begin();
     }
 
     private void renderizarMenuReceitas() {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
 
-        // Centraliza o Menu.png na tela
-        float menuW = VIEWPORT_WIDTH * 0.8f;   // 80% da largura da viewport
-        float menuH = VIEWPORT_HEIGHT * 0.8f;  // 80% da altura
+        float menuW = VIEWPORT_WIDTH * 0.8f;
+        float menuH = VIEWPORT_HEIGHT * 0.8f;
         float menuX = camera.position.x - menuW / 2f;
         float menuY = camera.position.y - menuH / 2f;
 
-        batch.draw(menuReceitasTexture, menuX, menuY, menuW, menuH);
+        if (menuReceitasTexture != null) {
+            batch.draw(menuReceitasTexture, menuX, menuY, menuW, menuH);
+        } else {
+            desenharPainelFallback(menuX, menuY, menuW, menuH);
+        }
 
-        // Mensagem de ajuda no topo
-        font.draw(batch, "Aperte 0-9 para craftar | ESC para fechar | XP: " + user.getXp()
-              + " Nv " + user.getNivel().numero, camera.position.x - VIEWPORT_WIDTH / 2f + 5,
-              camera.position.y + VIEWPORT_HEIGHT / 2f - 5);
+        font.draw(
+            batch,
+            "Aperte 0-9 para craftar | ESC para fechar | XP: " +
+                user.getXp() +
+                " Nv " +
+                user.getNivel().numero,
+            camera.position.x - VIEWPORT_WIDTH / 2f + 5,
+            camera.position.y + VIEWPORT_HEIGHT / 2f - 5
+        );
+        batch.end();
+    }
+
+    private void renderizarMenuBag() {
+        batch.setProjectionMatrix(camera.combined);
+        batch.begin();
+
+        float menuW = VIEWPORT_WIDTH * 0.8f;
+        float menuH = VIEWPORT_HEIGHT * 0.8f;
+        float menuX = camera.position.x - menuW / 2f;
+        float menuY = camera.position.y - menuH / 2f;
+
+        if (menuBagTexture != null) {
+            batch.draw(menuBagTexture, menuX, menuY, menuW, menuH);
+        } else {
+            desenharPainelFallback(menuX, menuY, menuW, menuH);
+        }
+
+        font.draw(
+            batch,
+            "Bag | B ou ESC para fechar",
+            menuX + 10f,
+            menuY + menuH - 8f
+        );
+
+        float primeiraLinhaY = menuY + menuH * 0.82f;
+        float espacamentoLinha = menuH * 0.095f;
+        float contadorX = menuX + menuW * 0.63f;
+        Color corOriginal = font.getColor().cpy();
+        font.setColor(new Color(0.30f, 0.18f, 0.09f, 1f));
+
+        for (int i = 0; i < itensBagPorOrdem.length; i++) {
+            IngredientId itemId = itensBagPorOrdem[i];
+            int quantidade = bag.getQuantidade(itemId);
+            float linhaY = primeiraLinhaY - i * espacamentoLinha;
+
+            if (menuBagTexture != null) {
+                font.draw(batch, "x" + quantidade, contadorX, linhaY);
+            } else {
+                font.draw(
+                    batch,
+                    itemId.name().replace('_', ' ') + ": " + quantidade,
+                    menuX + 16f,
+                    linhaY
+                );
+            }
+        }
+
+        font.setColor(corOriginal);
         batch.end();
     }
 
     private void tentarCraftar() {
         int[] teclas = {
-            Input.Keys.NUM_0, Input.Keys.NUM_1, Input.Keys.NUM_2, Input.Keys.NUM_3,
-            Input.Keys.NUM_4, Input.Keys.NUM_5, Input.Keys.NUM_6, Input.Keys.NUM_7,
-            Input.Keys.NUM_8, Input.Keys.NUM_9
+            Input.Keys.NUM_0,
+            Input.Keys.NUM_1,
+            Input.Keys.NUM_2,
+            Input.Keys.NUM_3,
+            Input.Keys.NUM_4,
+            Input.Keys.NUM_5,
+            Input.Keys.NUM_6,
+            Input.Keys.NUM_7,
+            Input.Keys.NUM_8,
+            Input.Keys.NUM_9,
         };
 
         for (int i = 0; i < teclas.length; i++) {
@@ -370,17 +514,27 @@ public class GameScreen implements Screen {
                 IngredientId id = receitasPorTecla[i];
                 // Verifica se o nível do user permite essa receita
                 if (!user.desbloqueou(id)) {
-                    Gdx.app.log("Crafting", "Receita " + id + " bloqueada — nível insuficiente.");
+                    Gdx.app.log(
+                        "Crafting",
+                        "Receita " + id + " bloqueada — nível insuficiente."
+                    );
                     return;
                 }
                 Recipe craftada = recipeRegistry.craftar(id, bag);
                 if (craftada != null) {
                     user.addXp(craftada.getXpReward());
-                    Gdx.app.log("Crafting",
-                        "Craftou " + craftada.getNome()
-                        + " (+" + craftada.getXpReward() + " XP) "
-                        + "| Total XP: " + user.getXp()
-                        + " | Nível: " + user.getNivel().numero);
+                    Gdx.app.log(
+                        "Crafting",
+                        "Craftou " +
+                            craftada.getNome() +
+                            " (+" +
+                            craftada.getXpReward() +
+                            " XP) " +
+                            "| Total XP: " +
+                            user.getXp() +
+                            " | Nível: " +
+                            user.getNivel().numero
+                    );
                 } else {
                     Gdx.app.log("Crafting", "Faltam ingredientes para " + id);
                 }
@@ -405,13 +559,34 @@ public class GameScreen implements Screen {
         }
 
         if (menuReceitasAberto) {
-            if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+            if (
+                Gdx.input.isKeyJustPressed(Input.Keys.E) ||
+                Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)
+            ) {
                 fecharMenuReceitas();
             }
             tentarCraftar();
 
             renderizarMundo(delta, false);
             renderizarMenuReceitas();
+            return;
+        }
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.B)) {
+            if (menuBagAberto) {
+                fecharMenuBag();
+            } else {
+                abrirMenuBag();
+            }
+        }
+
+        if (menuBagAberto) {
+            if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+                fecharMenuBag();
+            }
+
+            renderizarMundo(delta, false);
+            renderizarMenuBag();
             return;
         }
 
@@ -451,25 +626,42 @@ public class GameScreen implements Screen {
             }
 
             if (!dentroDaCasa) {
-                if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) plantaSelecionada = plantRegistry.trigo;
-                if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_2)) plantaSelecionada = plantRegistry.cana;
-                if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) plantaSelecionada = plantRegistry.morango;
-                if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_4)) plantaSelecionada = plantRegistry.abobora;
-                if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_5)) plantaSelecionada = plantRegistry.tomate;
-                if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_6)) plantaSelecionada = plantRegistry.alface;
-                if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_7)) plantaSelecionada = plantRegistry.amendoim;
-                if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_8)) plantaSelecionada = plantRegistry.maca;
-                if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_9)) plantaSelecionada = plantRegistry.laranja;
-                if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_0)) plantaSelecionada = plantRegistry.uva;
+                if (
+                    Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)
+                ) plantaSelecionada = plantRegistry.trigo;
+                if (
+                    Gdx.input.isKeyJustPressed(Input.Keys.NUM_2)
+                ) plantaSelecionada = plantRegistry.cana;
+                if (
+                    Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)
+                ) plantaSelecionada = plantRegistry.morango;
+                if (
+                    Gdx.input.isKeyJustPressed(Input.Keys.NUM_4)
+                ) plantaSelecionada = plantRegistry.abobora;
+                if (
+                    Gdx.input.isKeyJustPressed(Input.Keys.NUM_5)
+                ) plantaSelecionada = plantRegistry.tomate;
+                if (
+                    Gdx.input.isKeyJustPressed(Input.Keys.NUM_6)
+                ) plantaSelecionada = plantRegistry.alface;
+                if (
+                    Gdx.input.isKeyJustPressed(Input.Keys.NUM_7)
+                ) plantaSelecionada = plantRegistry.amendoim;
+                if (
+                    Gdx.input.isKeyJustPressed(Input.Keys.NUM_8)
+                ) plantaSelecionada = plantRegistry.maca;
+                if (
+                    Gdx.input.isKeyJustPressed(Input.Keys.NUM_9)
+                ) plantaSelecionada = plantRegistry.laranja;
+                if (
+                    Gdx.input.isKeyJustPressed(Input.Keys.NUM_0)
+                ) plantaSelecionada = plantRegistry.uva;
             }
         }
 
         // Atualiza hitbox na nova posição
         // Centraliza a hitbox nos pés do personagem
-        hitboxPlayer.setPosition(
-            playerX - HITBOX_W / 2f,
-            playerY - HITBOX_H
-        );
+        hitboxPlayer.setPosition(playerX - HITBOX_W / 2f, playerY - HITBOX_H);
 
         if (atualizar) {
             // Verifica colisão com os objetos do mapa
@@ -487,15 +679,24 @@ public class GameScreen implements Screen {
             }
 
             // Limites do mapa (não sai pela borda)
-            playerX = Math.max(HITBOX_W / 2f, Math.min(playerX, mapWidth  - HITBOX_W / 2f));
-            playerY = Math.max(HITBOX_H,      Math.min(playerY, mapHeight - HITBOX_H));
+            playerX = Math.max(
+                HITBOX_W / 2f,
+                Math.min(playerX, mapWidth - HITBOX_W / 2f)
+            );
+            playerY = Math.max(
+                HITBOX_H,
+                Math.min(playerY, mapHeight - HITBOX_H)
+            );
 
             // Verifica se pode sair ou entrar na casa
-            boolean podeEntrar = !dentroDaCasa && hitboxPlayer.overlaps(zonaEntradaCasa);
-            boolean podeSair = dentroDaCasa && hitboxPlayer.overlaps(zonaSaidaCasa);
+            boolean podeEntrar =
+                !dentroDaCasa && hitboxPlayer.overlaps(zonaEntradaCasa);
+            boolean podeSair =
+                dentroDaCasa && hitboxPlayer.overlaps(zonaSaidaCasa);
             podeInteragir = podeEntrar || podeSair || podeAbrirReceitas;
 
-            podeAbrirReceitas = dentroDaCasa && hitboxPlayer.overlaps(abrirMenuReceitas);
+            podeAbrirReceitas =
+                dentroDaCasa && hitboxPlayer.overlaps(abrirMenuReceitas);
 
             if (podeEntrar && Gdx.input.isKeyJustPressed(Input.Keys.E)) {
                 entrarNaCasa();
@@ -511,22 +712,24 @@ public class GameScreen implements Screen {
             if (!dentroDaCasa && Gdx.input.isKeyJustPressed(Input.Keys.E)) {
                 for (TileHorta tile : tilesHorta) {
                     if (hitboxPlayer.overlaps(tile.area)) {
-
                         boolean colheu = tile.podeColher();
                         Plant resultado = colheu ? tile.colher() : null;
 
                         if (!colheu) {
                             // Usa a planta selecionada pelo teclado
                             tile.interagir(plantaSelecionada);
-                        } 
-                        
-                        else {
-                            if (resultado != null){
+                        } else {
+                            if (resultado != null) {
                                 bag.adicionar(resultado.getId(), 1);
-                                Gdx.app.log("Horta", "Colheu " + resultado.getNome() + " (total: " + bag.getQuantidade(resultado.getId()) + ")");
-                            }
-                            else {
-
+                                Gdx.app.log(
+                                    "Horta",
+                                    "Colheu " +
+                                        resultado.getNome() +
+                                        " (total: " +
+                                        bag.getQuantidade(resultado.getId()) +
+                                        ")"
+                                );
+                            } else {
                             }
                         }
                         break;
@@ -541,7 +744,7 @@ public class GameScreen implements Screen {
             frameAtual = animAtual.getKeyFrame(stateTime, true);
         } else {
             frameAtual = animAtual.getKeyFrame(0);
-            stateTime  = 0f;
+            stateTime = 0f;
         }
 
         // Câmera segue o personagem
@@ -558,9 +761,14 @@ public class GameScreen implements Screen {
         // Desenha tiles da horta (no exterior)
         if (!dentroDaCasa) {
             for (TileHorta tile : tilesHorta) {
-                tile.desenhar(batch,
-                    spriteTerraNormal, spriteTerraArada,
-                    spriteTerraSemeada, spriteTerraMolhada, spriteTerraPronta);
+                tile.desenhar(
+                    batch,
+                    spriteTerraNormal,
+                    spriteTerraArada,
+                    spriteTerraSemeada,
+                    spriteTerraMolhada,
+                    spriteTerraPronta
+                );
             }
         }
 
@@ -568,17 +776,27 @@ public class GameScreen implements Screen {
         float escala = 1f;
         batch.draw(
             frameAtual,
-            playerX - (FRAME_WIDTH  * escala) / 2f,
+            playerX - (FRAME_WIDTH * escala) / 2f,
             playerY - (FRAME_HEIGHT * escala) / 2f,
-            FRAME_WIDTH  * escala,
+            FRAME_WIDTH * escala,
             FRAME_HEIGHT * escala
         );
-        font.draw(batch, "X:" + (int)playerX + " Y:" + (int)playerY, playerX - 40, playerY + 30);
-            if (podeInteragir) {
-                font.draw(batch, "Pressione E", playerX - 30, playerY + 45);
-            }
+        font.draw(
+            batch,
+            "X:" + (int) playerX + " Y:" + (int) playerY,
+            playerX - 40,
+            playerY + 30
+        );
+        if (podeInteragir) {
+            font.draw(batch, "Pressione E", playerX - 30, playerY + 45);
+        }
         if (!dentroDaCasa) {
-            font.draw(batch, "Planta: " + plantaSelecionada.getNome(), playerX - 40, playerY + 60);
+            font.draw(
+                batch,
+                "Planta: " + plantaSelecionada.getNome(),
+                playerX - 40,
+                playerY + 60
+            );
         }
         batch.end();
 
@@ -587,10 +805,20 @@ public class GameScreen implements Screen {
         shapes.setColor(Color.RED);
         // Desenha hitbox do jogador
         for (Rectangle obstaculo : colisoes) {
-            shapes.rect(obstaculo.x, obstaculo.y, obstaculo.width, obstaculo.height);
+            shapes.rect(
+                obstaculo.x,
+                obstaculo.y,
+                obstaculo.width,
+                obstaculo.height
+            );
         }
         shapes.setColor(Color.LIME);
-        shapes.rect(hitboxPlayer.x, hitboxPlayer.y, hitboxPlayer.width, hitboxPlayer.height);
+        shapes.rect(
+            hitboxPlayer.x,
+            hitboxPlayer.y,
+            hitboxPlayer.width,
+            hitboxPlayer.height
+        );
         shapes.end();
     }
 
@@ -618,10 +846,22 @@ public class GameScreen implements Screen {
         spriteTerraSemeada.dispose();
         spriteTerraMolhada.dispose();
         spriteTerraPronta.dispose();
-        menuReceitasTexture.dispose();
+        font.dispose();
+
+        if (menuReceitasTexture != null) {
+            menuReceitasTexture.dispose();
+        }
+        if (menuBagTexture != null) {
+            menuBagTexture.dispose();
+        }
     }
 
-    @Override public void pause()  {}
-    @Override public void resume() {}
-    @Override public void hide()   {}
+    @Override
+    public void pause() {}
+
+    @Override
+    public void resume() {}
+
+    @Override
+    public void hide() {}
 }
