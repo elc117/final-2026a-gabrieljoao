@@ -25,9 +25,13 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer; //Lista
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 
+import io.github.some_example_name.enums.IngredientId;
 import io.github.some_example_name.model.Bag;
 import io.github.some_example_name.model.Plant;
+import io.github.some_example_name.model.Recipe;
+import io.github.some_example_name.model.User;
 import io.github.some_example_name.registry.PlantRegistry;
+import io.github.some_example_name.registry.RecipeRegistry;
 
 public class GameScreen implements Screen {
 
@@ -102,6 +106,15 @@ public class GameScreen implements Screen {
     private Bag bag;
     private Plant plantaSelecionada; //Escolhe a planta que vai plantar (0 - 9)
 
+    // Sistema de crafting/menu de vendas
+    private Texture menuReceitasTexture;
+    private RecipeRegistry recipeRegistry;
+    private User user;
+    private boolean menuReceitasAberto = false;
+
+    // Mapeamento de teclas 0-9 → receita correspondente (na ordem do Menu.png)
+    private IngredientId[] receitasPorTecla;
+
     //==============================================================
 
 
@@ -147,6 +160,24 @@ public class GameScreen implements Screen {
         //Planta padrão é trigo
         plantaSelecionada = plantRegistry.trigo;
         bag = new Bag(); 
+
+        recipeRegistry = new RecipeRegistry();
+        user = new User("Jogador");
+        menuReceitasTexture = new Texture("Menu.png");
+
+        receitasPorTecla = new IngredientId[] {
+            IngredientId.FARINHA,
+            IngredientId.ACUCAR,
+            IngredientId.PAO,
+            IngredientId.GELEIA_DE_MORANGO,
+            IngredientId.TORTA_DE_ABOBORA,
+            IngredientId.SANDUICHE,
+            IngredientId.SANDUICHE_AMERICANO,
+            IngredientId.TORTA_DE_MACA,
+            IngredientId.VINHO,
+            IngredientId.SUCO_DE_LARANJA
+        };
+
 
         // Spritesheets
         sheetDown  = new Texture("Walk_Down.png");
@@ -276,7 +307,13 @@ public class GameScreen implements Screen {
     }
 
     private void abrirMenuReceitas() {
+        menuReceitasAberto = true;
         Gdx.app.log("Receitas", "Menu de Receitas Aberto!");
+    }
+
+    private void fecharMenuReceitas() {
+        menuReceitasAberto = false;
+        Gdx.app.log("Receitas", "Menu de Receitas Fechado!");
     }
 
     private void sairDaCasa() {
@@ -302,6 +339,56 @@ public class GameScreen implements Screen {
         return new Animation<>(FRAME_DURATION, frames);
     }
 
+    private void renderizarMenuReceitas() {
+        batch.setProjectionMatrix(camera.combined);
+        batch.begin();
+
+        // Centraliza o Menu.png na tela
+        float menuW = VIEWPORT_WIDTH * 0.8f;   // 80% da largura da viewport
+        float menuH = VIEWPORT_HEIGHT * 0.8f;  // 80% da altura
+        float menuX = camera.position.x - menuW / 2f;
+        float menuY = camera.position.y - menuH / 2f;
+
+        batch.draw(menuReceitasTexture, menuX, menuY, menuW, menuH);
+
+        // Mensagem de ajuda no topo
+        font.draw(batch, "Aperte 0-9 para craftar | ESC para fechar | XP: " + user.getXp()
+              + " Nv " + user.getNivel().numero, camera.position.x - VIEWPORT_WIDTH / 2f + 5,
+              camera.position.y + VIEWPORT_HEIGHT / 2f - 5);
+        batch.end();
+    }
+
+    private void tentarCraftar() {
+        int[] teclas = {
+            Input.Keys.NUM_0, Input.Keys.NUM_1, Input.Keys.NUM_2, Input.Keys.NUM_3,
+            Input.Keys.NUM_4, Input.Keys.NUM_5, Input.Keys.NUM_6, Input.Keys.NUM_7,
+            Input.Keys.NUM_8, Input.Keys.NUM_9
+        };
+
+        for (int i = 0; i < teclas.length; i++) {
+            if (Gdx.input.isKeyJustPressed(teclas[i])) {
+                IngredientId id = receitasPorTecla[i];
+                // Verifica se o nível do user permite essa receita
+                if (!user.desbloqueou(id)) {
+                    Gdx.app.log("Crafting", "Receita " + id + " bloqueada — nível insuficiente.");
+                    return;
+                }
+                Recipe craftada = recipeRegistry.craftar(id, bag);
+                if (craftada != null) {
+                    user.addXp(craftada.getXpReward());
+                    Gdx.app.log("Crafting",
+                        "Craftou " + craftada.getNome()
+                        + " (+" + craftada.getXpReward() + " XP) "
+                        + "| Total XP: " + user.getXp()
+                        + " | Nível: " + user.getNivel().numero);
+                } else {
+                    Gdx.app.log("Crafting", "Faltam ingredientes para " + id);
+                }
+                return;
+            }
+        }
+    }
+
     // Renderiza o jogo
     // ============================================================
     @Override
@@ -317,43 +404,64 @@ public class GameScreen implements Screen {
             tile.update(delta);
         }
 
+        if (menuReceitasAberto) {
+            if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+                fecharMenuReceitas();
+            }
+            tentarCraftar();
+
+            renderizarMundo(delta, false);
+            renderizarMenuReceitas();
+            return;
+        }
+
+        renderizarMundo(delta, true);
+    }
+
+    // Renderização e lógica do mundo
+    // atualizar = false: só renderiza o mundo congelado (usado quando o menu está aberto)
+    // atualizar = true:  roda input, movimento, colisões e interações normalmente
+    // ============================================================
+    private void renderizarMundo(float delta, boolean atualizar) {
         // Guarda posição anterior para reverter se colidir
         float anteriorX = playerX;
         float anteriorY = playerY;
 
-        // Movimentação WASD
-        if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-            playerY += VELOCIDADE * delta;
-            animAtual = animUp;
-            movendo = true;
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-            playerY -= VELOCIDADE * delta;
-            animAtual = animDown;
-            movendo = true;
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-            playerX -= VELOCIDADE * delta;
-            animAtual = animLeft;
-            movendo = true;
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-            playerX += VELOCIDADE * delta;
-            animAtual = animRight;
-            movendo = true;
-        }
+        if (atualizar) {
+            // Movimentação WASD
+            if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+                playerY += VELOCIDADE * delta;
+                animAtual = animUp;
+                movendo = true;
+            }
+            if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+                playerY -= VELOCIDADE * delta;
+                animAtual = animDown;
+                movendo = true;
+            }
+            if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+                playerX -= VELOCIDADE * delta;
+                animAtual = animLeft;
+                movendo = true;
+            }
+            if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+                playerX += VELOCIDADE * delta;
+                animAtual = animRight;
+                movendo = true;
+            }
 
-        if (!dentroDaCasa) {
-            if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) plantaSelecionada = plantRegistry.trigo;
-            if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_2)) plantaSelecionada = plantRegistry.cana;
-            if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) plantaSelecionada = plantRegistry.morango;
-            if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_4)) plantaSelecionada = plantRegistry.abobora;
-            if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_5)) plantaSelecionada = plantRegistry.tomate;
-            if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_6)) plantaSelecionada = plantRegistry.alface;
-            if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_7)) plantaSelecionada = plantRegistry.amendoim;
-            if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_8)) plantaSelecionada = plantRegistry.maca;
-            if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_9)) plantaSelecionada = plantRegistry.laranja;
-            if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_0)) plantaSelecionada = plantRegistry.uva;
+            if (!dentroDaCasa) {
+                if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) plantaSelecionada = plantRegistry.trigo;
+                if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_2)) plantaSelecionada = plantRegistry.cana;
+                if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) plantaSelecionada = plantRegistry.morango;
+                if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_4)) plantaSelecionada = plantRegistry.abobora;
+                if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_5)) plantaSelecionada = plantRegistry.tomate;
+                if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_6)) plantaSelecionada = plantRegistry.alface;
+                if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_7)) plantaSelecionada = plantRegistry.amendoim;
+                if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_8)) plantaSelecionada = plantRegistry.maca;
+                if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_9)) plantaSelecionada = plantRegistry.laranja;
+                if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_0)) plantaSelecionada = plantRegistry.uva;
+            }
         }
 
         // Atualiza hitbox na nova posição
@@ -363,64 +471,66 @@ public class GameScreen implements Screen {
             playerY - HITBOX_H
         );
 
-        // Verifica colisão com os objetos do mapa
-        for (Rectangle obstaculo : colisoes) {
-            if (hitboxPlayer.overlaps(obstaculo)) {
-                // Reverte para a posição anterior se colidiu
-                playerX = anteriorX;
-                playerY = anteriorY;
-                hitboxPlayer.setPosition(
-                    playerX - HITBOX_W / 2f,
-                    playerY - HITBOX_H
-                );
-                break;
-            }
-        }
-
-        // Limites do mapa (não sai pela borda)
-        playerX = Math.max(HITBOX_W / 2f, Math.min(playerX, mapWidth  - HITBOX_W / 2f));
-        playerY = Math.max(HITBOX_H,      Math.min(playerY, mapHeight - HITBOX_H));
-
-        // Verifica se pode sair ou entrar na casa
-        boolean podeEntrar = !dentroDaCasa && hitboxPlayer.overlaps(zonaEntradaCasa);
-        boolean podeSair = dentroDaCasa && hitboxPlayer.overlaps(zonaSaidaCasa);
-        podeInteragir = podeEntrar || podeSair || podeAbrirReceitas;
-
-        podeAbrirReceitas = dentroDaCasa && hitboxPlayer.overlaps(abrirMenuReceitas);
-
-        if (podeEntrar && Gdx.input.isKeyJustPressed(Input.Keys.E)) {
-            entrarNaCasa();
-        }
-        if (podeSair && Gdx.input.isKeyJustPressed(Input.Keys.E)) {
-            sairDaCasa();
-        }
-
-        if (podeAbrirReceitas && Gdx.input.isKeyJustPressed(Input.Keys.E)) {
-            abrirMenuReceitas();
-        }
-        //Interação pra plantar
-        if (!dentroDaCasa && Gdx.input.isKeyJustPressed(Input.Keys.E)) {
-            for (TileHorta tile : tilesHorta) {
-                if (hitboxPlayer.overlaps(tile.area)) {
-
-                    boolean colheu = tile.podeColher();
-                    Plant resultado = colheu ? tile.colher() : null;
-
-                    if (!colheu) {
-                        // Usa a planta selecionada pelo teclado
-                        tile.interagir(plantaSelecionada);
-                    } 
-                    
-                    else {
-                        if (resultado != null){
-                            bag.adicionar(resultado.getId(), 1);
-                            Gdx.app.log("Horta", "Colheu " + resultado.getNome() + " (total: " + bag.getQuantidade(resultado.getId()) + ")");
-                        }
-                        else {
-
-                        }
-                    }
+        if (atualizar) {
+            // Verifica colisão com os objetos do mapa
+            for (Rectangle obstaculo : colisoes) {
+                if (hitboxPlayer.overlaps(obstaculo)) {
+                    // Reverte para a posição anterior se colidiu
+                    playerX = anteriorX;
+                    playerY = anteriorY;
+                    hitboxPlayer.setPosition(
+                        playerX - HITBOX_W / 2f,
+                        playerY - HITBOX_H
+                    );
                     break;
+                }
+            }
+
+            // Limites do mapa (não sai pela borda)
+            playerX = Math.max(HITBOX_W / 2f, Math.min(playerX, mapWidth  - HITBOX_W / 2f));
+            playerY = Math.max(HITBOX_H,      Math.min(playerY, mapHeight - HITBOX_H));
+
+            // Verifica se pode sair ou entrar na casa
+            boolean podeEntrar = !dentroDaCasa && hitboxPlayer.overlaps(zonaEntradaCasa);
+            boolean podeSair = dentroDaCasa && hitboxPlayer.overlaps(zonaSaidaCasa);
+            podeInteragir = podeEntrar || podeSair || podeAbrirReceitas;
+
+            podeAbrirReceitas = dentroDaCasa && hitboxPlayer.overlaps(abrirMenuReceitas);
+
+            if (podeEntrar && Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+                entrarNaCasa();
+            }
+            if (podeSair && Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+                sairDaCasa();
+            }
+
+            if (podeAbrirReceitas && Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+                abrirMenuReceitas();
+            }
+            //Interação pra plantar
+            if (!dentroDaCasa && Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+                for (TileHorta tile : tilesHorta) {
+                    if (hitboxPlayer.overlaps(tile.area)) {
+
+                        boolean colheu = tile.podeColher();
+                        Plant resultado = colheu ? tile.colher() : null;
+
+                        if (!colheu) {
+                            // Usa a planta selecionada pelo teclado
+                            tile.interagir(plantaSelecionada);
+                        } 
+                        
+                        else {
+                            if (resultado != null){
+                                bag.adicionar(resultado.getId(), 1);
+                                Gdx.app.log("Horta", "Colheu " + resultado.getNome() + " (total: " + bag.getQuantidade(resultado.getId()) + ")");
+                            }
+                            else {
+
+                            }
+                        }
+                        break;
+                    }
                 }
             }
         }
@@ -508,6 +618,7 @@ public class GameScreen implements Screen {
         spriteTerraSemeada.dispose();
         spriteTerraMolhada.dispose();
         spriteTerraPronta.dispose();
+        menuReceitasTexture.dispose();
     }
 
     @Override public void pause()  {}

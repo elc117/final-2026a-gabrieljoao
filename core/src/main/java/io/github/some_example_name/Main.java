@@ -9,7 +9,7 @@ public class Main extends Game {
 
     @Override
     public void create() {
-        musicaFundo = Gdx.audio.newMusic(Gdx.files.internal("musica.mp3"));
+        musicaFundo = Gdx.audio.newMusic(Gdx.files.internal("HappyFarmLolfi.mp3"));
         musicaFundo.setLooping(true);   
         musicaFundo.setVolume(0.5f);    
         musicaFundo.play();

@@ -31,28 +31,38 @@ public class RecipeRegistry{
     public final Recipe americano = new Recipe(IngredientId.SANDUICHE_AMERICANO, "SANDUICHE-AMERICANO", 160, List.of(this.pao, plantRegistry.amendoim, this.geleiaMorango));
     public final Recipe vinho = new Recipe(IngredientId.VINHO, "VINHO", 500, List.of(plantRegistry.uva, this.acucar));
 
-    private Recipe criar(IngredientId id, String nome, int xpReward, List<Ingredient> ingredientes) {
-        Recipe r = new Recipe(id, nome, xpReward, ingredientes);
-        receitas.put(id, r);
-        return r;
+    {
+    // Bloco de inicialização — registra todas as receitas no map
+    receitas.put(farinha.getId(),       farinha);
+    receitas.put(acucar.getId(),        acucar);
+    receitas.put(pao.getId(),           pao);
+    receitas.put(geleiaMorango.getId(), geleiaMorango);
+    receitas.put(tortaAbobora.getId(),  tortaAbobora);
+    receitas.put(sanduiche.getId(),     sanduiche);
+    receitas.put(americano.getId(),     americano);
+    receitas.put(tortaMaca.getId(),     tortaMaca);
+    receitas.put(vinho.getId(),         vinho);
+    receitas.put(sucoLaranja.getId(),   sucoLaranja);
     }
 
     public Recipe getRecipe(IngredientId id) {
         return receitas.get(id);
     }
 
-    public boolean craftar(IngredientId id, Bag bag) {
+    public Recipe craftar(IngredientId id, Bag bag) {
         Recipe receita = getRecipe(id);
-        if (receita == null) return false;
+        if (receita == null) return null;
 
-        for (Ingredient Ingredient : receita.getIngredientes()) {
-            if (!bag.temItem(Ingredient.getId(), 1)) return false;
+        // Verifica se tem todos os ingredientes
+        for (Ingredient ingredient : receita.getIngredientes()) {
+            if (!bag.temItem(ingredient.getId(), 1)) return null;
         }
 
-        for (Ingredient Ingredient : receita.getIngredientes()) {
-            bag.remover(Ingredient.getId(), 1);
+        // Remove ingredientes e adiciona o produto final
+        for (Ingredient ingredient : receita.getIngredientes()) {
+            bag.remover(ingredient.getId(), 1);
         }
         bag.adicionar(receita.getId(), 1);
-        return true;
+        return receita;
     }
 }
