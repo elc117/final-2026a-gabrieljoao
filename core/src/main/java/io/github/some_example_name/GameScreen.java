@@ -388,9 +388,16 @@ public class GameScreen implements Screen {
                     if (!colheu) {
                         // Usa a planta selecionada pelo teclado
                         tile.interagir(plantaSelecionada);
-                    } else {
-                        bag.adicionar(resultado.getNome(), 1);
-                        Gdx.app.log("Horta", "Colheu " + resultado.getNome() + " (total: " + bag.getQuantidade(resultado.getNome()) + ")");
+                    } 
+                    
+                    else {
+                        if (resultado != null){
+                            bag.adicionar(resultado.getId(), 1);
+                            Gdx.app.log("Horta", "Colheu " + resultado.getNome() + " (total: " + bag.getQuantidade(resultado.getId()) + ")");
+                        }
+                        else {
+
+                        }
                     }
                     break;
                 }
