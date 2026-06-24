@@ -3,14 +3,16 @@ package io.github.some_example_name.model;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Bag {
-    private final Map<String, Integer> itens = new HashMap<>();
+import io.github.some_example_name.enums.IngredientId;
 
-    public void adicionar(String itemId, int quantidade) {
+public class Bag {
+    private final Map<IngredientId, Integer> itens = new HashMap<>();
+
+    public void adicionar(IngredientId itemId, int quantidade) {
         itens.merge(itemId, quantidade, Integer::sum);
     }
 
-    public boolean remover(String itemId, int quantidade) {
+    public boolean remover(IngredientId itemId, int quantidade) {
         int atual = itens.getOrDefault(itemId, 0);
         if (atual < quantidade) 
             return false; 
@@ -24,15 +26,15 @@ public class Bag {
         return true;
     }
 
-    public int getQuantidade(String itemId) {
+    public int getQuantidade(IngredientId itemId) {
         return itens.getOrDefault(itemId, 0);
     }
 
-    public boolean temItem(String itemId, int quantidade) {
+    public boolean temItem(IngredientId itemId, int quantidade) {
         return getQuantidade(itemId) >= quantidade;
     }
 
-    public Map<String, Integer> getItens() { 
+    public Map<IngredientId, Integer> getItens() { 
         return itens; 
     }
 }
