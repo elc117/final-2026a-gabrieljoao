@@ -35,6 +35,8 @@ Agora, devo usar o Claude para ter um direcionamento sobre como iniciar o projet
 - Dia 12/06: Alterei o ponto de spawn do jogador. (Gabriel)
 - Dia 12/06: Criei um novo diretório no libGDX sem as extensões desnecessárias que davam conflito ao tentar rodar o jogo via web. O projeto rodou sem erros, mas não consegui abrir o jogo de fato, nem gerar arquivos. Irei aprender como prosseguir daqui. (Gabriel)
 - Dia 12/06: Terminei a lógica das classes e criei uma pasta registry com criação de objetos, acredito que a partir daí conseguimos mexer neles dentro do jogo. (João)
+- Dia 22/06: Criei uma bag para guardar os itens, ajudei o gabriel a achar umas sprites, achamos melhor não fazer as ferramentas no jogo por logística e por sprites e animações faltando. (João)
+- Dia 23/06: tava em dúvida se usava a bag ou o recipeRegistry para craftar as receitas mas o Claude me explicou que fica mais padronizado ser pelo recipeRegistry, tava dando erro de tipos mas consegui ver e pelo visto a bag não estava atualizada para receber do enum IngredientId o id de cada objeto (que eu fiz isso ontem de criar esse enum), ainda vou esperar para ter uma maior integração com os gráficos e lógica de movimentação e escolhas para ver se eu adiciono ou até apago algumas lógicas ou até enums que eu já tinha colocado. (João)
 
 
 
