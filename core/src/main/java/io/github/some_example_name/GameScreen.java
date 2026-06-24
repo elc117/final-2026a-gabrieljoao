@@ -352,7 +352,7 @@ public class GameScreen implements Screen {
         batch.draw(menuReceitasTexture, menuX, menuY, menuW, menuH);
 
         // Mensagem de ajuda no topo
-        font.draw(batch, "Aperte 0-9 para craftar | ESC para fechar | XP: " + user.getXp()
+        font.draw(batch, "Aperte 0-9 para craftar | E para fechar | XP: " + user.getXp()
               + " Nv " + user.getNivel().numero, camera.position.x - VIEWPORT_WIDTH / 2f + 5,
               camera.position.y + VIEWPORT_HEIGHT / 2f - 5);
         batch.end();
