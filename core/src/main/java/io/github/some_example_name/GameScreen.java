@@ -25,6 +25,10 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer; //Lista
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 
+import io.github.some_example_name.model.Bag;
+import io.github.some_example_name.model.Plant;
+import io.github.some_example_name.registry.PlantRegistry;
+
 public class GameScreen implements Screen {
 
     // VARIAVEIS E CONSTANTES DO JOGO
@@ -85,6 +89,10 @@ public class GameScreen implements Screen {
     // Horta
     private List <TileHorta> tilesHorta = new ArrayList<>();
     private Texture spriteTerraNormal, spriteTerraArada, spriteTerraSemeada, spriteTerraMolhada, spriteTerraPronta;
+    
+    private PlantRegistry plantRegistry;
+    private Bag bag;
+    private Plant plantaSelecionada; //Escolhe a planta que vai plantar (0 - 9)
 
     //==============================================================
 
@@ -126,6 +134,11 @@ public class GameScreen implements Screen {
 
         // Cria a grade de tiles plantáveis (9 cols x 6 linhas, 16px cada)
         criarHorta(389f, 200f, 9, 6, 16f);
+        plantRegistry = new PlantRegistry();
+
+        //Planta padrão é trigo
+        plantaSelecionada = plantRegistry.trigo;
+        bag = new Bag(); 
 
         // Spritesheets
         sheetDown  = new Texture("Walk_Down.png");
@@ -217,16 +230,14 @@ public class GameScreen implements Screen {
     }
 
     private void carregarColisoesInterior() {
-        // PAREDES
+    // Paredes
     colisoes.add(new Rectangle(0,   176, 320, 64));  // parede superior
     colisoes.add(new Rectangle(0, 0, 314, 18)); // parede inferior
     colisoes.add(new Rectangle(0,   8,  16,  208)); // parede esquerda
     colisoes.add(new Rectangle(306, 0, 8, 180)); // parede direita
-
-    // PAREDE INTERNA DO QUARTO
     colisoes.add(new Rectangle(91, 122, 24, 53)); // divisória do quarto
 
-    // MÓVEIS
+    // Móveis
     colisoes.add(new Rectangle(166, 85, 37, 30)); // mesa redonda
     colisoes.add(new Rectangle(22, 28, 55, 32)); // mesas de canto
     colisoes.add(new Rectangle(259, 167, 39, 13)); // estante de vendas
@@ -286,6 +297,11 @@ public class GameScreen implements Screen {
         stateTime += delta;
         movendo = false;
 
+        //Atualiza crescimento das plantas
+        for (TileHorta tile : tilesHorta) {
+            tile.update(delta);
+        }
+
         // Guarda posição anterior para reverter se colidir
         float anteriorX = playerX;
         float anteriorY = playerY;
@@ -310,6 +326,19 @@ public class GameScreen implements Screen {
             playerX += VELOCIDADE * delta;
             animAtual = animRight;
             movendo = true;
+        }
+
+        if (!dentroDaCasa) {
+            if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) plantaSelecionada = plantRegistry.trigo;
+            if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_2)) plantaSelecionada = plantRegistry.cana;
+            if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) plantaSelecionada = plantRegistry.morango;
+            if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_4)) plantaSelecionada = plantRegistry.abobora;
+            if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_5)) plantaSelecionada = plantRegistry.tomate;
+            if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_6)) plantaSelecionada = plantRegistry.alface;
+            if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_7)) plantaSelecionada = plantRegistry.amendoim;
+            if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_8)) plantaSelecionada = plantRegistry.maca;
+            if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_9)) plantaSelecionada = plantRegistry.laranja;
+            if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_0)) plantaSelecionada = plantRegistry.uva;
         }
 
         // Atualiza hitbox na nova posição
@@ -348,11 +377,22 @@ public class GameScreen implements Screen {
         if (podeSair && Gdx.input.isKeyJustPressed(Input.Keys.E)) {
             sairDaCasa();
         }
+        //Interação pra plantar
         if (!dentroDaCasa && Gdx.input.isKeyJustPressed(Input.Keys.E)) {
-            for (TileHorta tile: tilesHorta) {
+            for (TileHorta tile : tilesHorta) {
                 if (hitboxPlayer.overlaps(tile.area)) {
-                    tile.interagir();
-                    break; //Só permite uma interação
+
+                    boolean colheu = tile.podeColher();
+                    Plant resultado = colheu ? tile.colher() : null;
+
+                    if (!colheu) {
+                        // Usa a planta selecionada pelo teclado
+                        tile.interagir(plantaSelecionada);
+                    } else {
+                        bag.adicionar(resultado.getNome(), 1);
+                        Gdx.app.log("Horta", "Colheu " + resultado.getNome() + " (total: " + bag.getQuantidade(resultado.getNome()) + ")");
+                    }
+                    break;
                 }
             }
         }
@@ -399,6 +439,9 @@ public class GameScreen implements Screen {
             if (podeInteragir) {
                 font.draw(batch, "Pressione E", playerX - 30, playerY + 45);
             }
+        if (!dentroDaCasa) {
+            font.draw(batch, "Planta: " + plantaSelecionada.getNome(), playerX - 40, playerY + 60);
+        }
         batch.end();
 
         shapes.setProjectionMatrix(camera.combined);
