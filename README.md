@@ -49,7 +49,12 @@ Período de inatividade em função daquele bug com o Github e problemas com dir
   AVISO IMPORTANTE!!!!! 
   RODAR APENAS USANDO O HTML. Localmente o jogo fica travado, não entendemos o motivo ainda.
 
-
+  ----------------------------------------------------------------------
+  FONTES DE SPRITES USADOS:
+  - Sprite do cenário exterior e tiles que usei para fazer o do interior: https://craftpix.net/freebies/main-characters-home-free-top-down-pixel-art-asset/
+  - Sprite do personagem: https://runninblood.itch.io/16x16-top-down-character
+  - Sprites das plantas e menus (bag e craft): Feito com o auxílio do ChatGPT
+  
 https://github.com/user-attachments/assets/b6537723-4bfc-441e-af96-14887ba98d1b
 
 
@@ -61,249 +66,266 @@ A proposta de "grupos" será enquadrada no projeto da seguinte maneira:
 Grupos de Colheitas: Plantas com diferentes requisitos para serem plantadas, ex: parreira, direto no solo, árvore frutífera
 Grupos de Receitas: Receitas de uma única planta, Receitas que envolvem mais de uma planta ou outras receitas prévias (ex: farinha de trigo, geleia de uva, pão com geleia de uva)
 ------------------------------------------------------------------------
-**Diagrama de Classes**
+# Diagrama de Classes
 
+```mermaid
+classDiagram
+    %% ── Entidades de domínio ──────────────────────────────────────
 
-%% ── Entidades de domínio ──────────────────────────────────────
+    class Ingredient {
+        -IngredientId id
+        -String nome
+        +getId() IngredientId
+        +getNome() String
+        +toString() String
+    }
 
-class Ingredient {
-    -IngredientId id
-    -String nome
-    +getId() IngredientId
-    +getNome() String
-    +toString() String
-}
+    class Plant {
+        -PlantGrowth tempoDeCrescimento
+        -List~Tool~ ferramentasNecessarias
+        +getTempoDeCrescimento() float
+        +getFerramentasNecessarias() List~Tool~
+    }
 
-class Plant {
-    -PlantGrowth tempoDeCrescimento
-    -List~Tool~ ferramentasNecessarias
-    +getTempoDeCrescimento() float
-    +getFerramentasNecessarias() List~Tool~
-}
+    class Recipe {
+        -int xpReward
+        -List~Ingredient~ ingredientes
+        +getXpReward() int
+        +getIngredientes() List~Ingredient~
+    }
 
-class Recipe {
-    -int xpReward
-    -List~Ingredient~ ingredientes
-    +getXpReward() int
-    +getIngredientes() List~Ingredient~
-}
+    class Tool {
+        -int id
+        -String nome
+        -int hierarquia
+        +getId() int
+        +getNome() String
+        +getHierarquia() int
+    }
 
-class Tool {
-    -int id
-    -String nome
-    -int hierarquia
-    +getId() int
-    +getNome() String
-    +getHierarquia() int
-}
+    class Bag {
+        -Map~IngredientId, Integer~ itens
+        +adicionar(IngredientId, int) void
+        +remover(IngredientId, int) boolean
+        +getQuantidade(IngredientId) int
+        +temItem(IngredientId, int) boolean
+        +getItens() Map~IngredientId, Integer~
+    }
 
-class Bag {
-    -Map~IngredientId, Integer~ itens
-    +adicionar(IngredientId, int) void
-    +remover(IngredientId, int) boolean
-    +getQuantidade(IngredientId) int
-    +temItem(IngredientId, int) boolean
-    +getItens() Map~IngredientId, Integer~
-}
+    class PlantInstance {
+        -Plant plant
+        -PlantState state
+        -float timerSegundos
+        -boolean foiRegada
+        +update(float) void
+        +darAgua() void
+        +getState() PlantState
+        +getPlant() Plant
+        +getProgresso() float
+    }
 
-class PlantInstance {
-    -Plant plant
-    -PlantState state
-    -float timerSegundos
-    -boolean foiRegada
-    +update(float) void
-    +darAgua() void
-    +getState() PlantState
-    +getPlant() Plant
-    +getProgresso() float
-}
+    class User {
+        -String nome
+        -Level nivel
+        -int xp
+        +addXp(int) void
+        +desbloqueou(IngredientId) boolean
+        +getNivel() Level
+        +getXp() int
+    }
 
-class User {
-    -String nome
-    -Level nivel
-    -int xp
-    +addXp(int) void
-    +desbloqueou(IngredientId) boolean
-    +getNivel() Level
-    +getXp() int
-}
+    %% ── Registries ───────────────────────────────────────────────
 
-%% ── Registries ───────────────────────────────────────────────
+    class ToolRegistry {
+        +Tool enxada
+        +Tool rasteira
+        +Tool suporte
+        +Tool adubo
+        +Tool pa
+        +List~Tool~ trigoTools
+        +List~Tool~ canaTools
+        +List~Tool~ morangoTools
+    }
 
-class ToolRegistry {
-    +Tool enxada
-    +Tool rasteira
-    +Tool suporte
-    +Tool adubo
-    +Tool pa
-    +List~Tool~ trigoTools
-    +List~Tool~ canaTools
-    +List~Tool~ morangoTools
-    ...
-}
+    class PlantRegistry {
+        -ToolRegistry toolRegistry
+        +Plant trigo
+        +Plant cana
+        +Plant morango
+        +Plant abobora
+        +Plant tomate
+        +Plant alface
+        +Plant amendoim
+        +Plant maca
+        +Plant laranja
+        +Plant uva
+    }
 
-class PlantRegistry {
-    -ToolRegistry toolRegistry
-    +Plant trigo
-    +Plant cana
-    +Plant morango
-    +Plant abobora
-    +Plant tomate
-    +Plant alface
-    +Plant amendoim
-    +Plant maca
-    +Plant laranja
-    +Plant uva
-}
+    class RecipeRegistry {
+        -PlantRegistry plantRegistry
+        -Map~IngredientId, Recipe~ receitas
+        +Recipe farinha
+        +Recipe acucar
+        +Recipe pao
+        +Recipe geleiaMorango
+        +Recipe tortaAbobora
+        +Recipe sanduiche
+        +Recipe americano
+        +Recipe tortaMaca
+        +Recipe vinho
+        +Recipe sucoLaranja
+        +getRecipe(IngredientId) Recipe
+        +craftar(IngredientId, Bag) Recipe
+    }
 
-class RecipeRegistry {
-    -PlantRegistry plantRegistry
-    -Map~IngredientId, Recipe~ receitas
-    +Recipe farinha
-    +Recipe acucar
-    +Recipe pao
-    +Recipe geleiaMorango
-    +Recipe tortaAbobora
-    +Recipe sanduiche
-    +Recipe americano
-    +Recipe tortaMaca
-    +Recipe vinho
-    +Recipe sucoLaranja
-    +getRecipe(IngredientId) Recipe
-    +craftar(IngredientId, Bag) Recipe
-}
+    %% ── Tela / Mundo ──────────────────────────────────────────────
 
-%% ── Tela / Mundo ──────────────────────────────────────────────
+    class TileHorta {
+        +Rectangle area
+        -EstadoTile estado
+        -PlantInstance planta
+        +podeArar() boolean
+        +arar() void
+        +podePlantar() boolean
+        +plantar(Plant) void
+        +podeRegar() boolean
+        +regar() void
+        +podeColher() boolean
+        +colher() Plant
+        +update(float) void
+        +interagir(Plant) boolean
+        +desenhar(SpriteBatch) void
+        +getEstadoTile() EstadoTile
+        +getPlanta() PlantInstance
+    }
 
-class TileHorta {
-    +Rectangle area
-    -EstadoTile estado
-    -PlantInstance planta
-    +podeArar() boolean
-    +arar() void
-    +podePlantar() boolean
-    +plantar(Plant) void
-    +podeRegar() boolean
-    +regar() void
-    +podeColher() boolean
-    +colher() Plant
-    +update(float) void
-    +interagir(Plant) boolean
-    +desenhar(SpriteBatch, ...) void
-    +getEstadoTile() EstadoTile
-    +getPlanta() PlantInstance
-}
+    class GameScreen {
+        -OrthographicCamera camera
+        -SpriteBatch batch
+        -TiledMap mapa
+        -Array~Rectangle~ colisoes
+        -List~TileHorta~ tilesHorta
+        -PlantRegistry plantRegistry
+        -RecipeRegistry recipeRegistry
+        -Bag bag
+        -User user
+        -Plant plantaSelecionada
+        -boolean menuReceitasAberto
+        +show() void
+        +render(float) void
+        +resize(int, int) void
+        +dispose() void
+    }
 
-class GameScreen {
-    -OrthographicCamera camera
-    -SpriteBatch batch
-    -TiledMap mapa
-    -Array~Rectangle~ colisoes
-    -List~TileHorta~ tilesHorta
-    -PlantRegistry plantRegistry
-    -RecipeRegistry recipeRegistry
-    -Bag bag
-    -User user
-    -Plant plantaSelecionada
-    -boolean menuReceitasAberto
-    +show() void
-    +render(float) void
-    +resize(int, int) void
-    +dispose() void
-}
+    class Main {
+        +Music musicaFundo
+        +create() void
+        +dispose() void
+        +pause() void
+        +resume() void
+    }
 
-class Main {
-    +Music musicaFundo
-    +create() void
-    +dispose() void
-    +pause() void
-    +resume() void
-}
+    %% ── Enums ────────────────────────────────────────────────────
 
-%% ── Enums ────────────────────────────────────────────────────
+    class IngredientId {
+        <<enumeration>>
+        TRIGO
+        CANA
+        MORANGO
+        ABOBORA
+        TOMATE
+        ALFACE
+        AMENDOIM
+        MACA
+        LARANJA
+        UVA
+        FARINHA
+        PAO
+        ACUCAR
+        GELEIA_DE_MORANGO
+        TORTA_DE_ABOBORA
+        SANDUICHE
+        SANDUICHE_AMERICANO
+        SUCO_DE_LARANJA
+        TORTA_DE_MACA
+        VINHO
+        +int value
+        +getValue() int
+    }
 
-class IngredientId {
-    <<enumeration>>
-    TRIGO, CANA, MORANGO, ABOBORA
-    TOMATE, ALFACE, AMENDOIM, MACA
-    LARANJA, UVA
-    FARINHA, PAO, ACUCAR
-    GELEIA_DE_MORANGO, TORTA_DE_ABOBORA
-    SANDUICHE, SANDUICHE_AMERICANO
-    SUCO_DE_LARANJA, TORTA_DE_MACA, VINHO
-    +int value
-    +getValue() int
-}
+    class PlantGrowth {
+        <<enumeration>>
+        GRASS
+        CREEPING
+        BUSH
+        SUPPORT
+        TREE
+        +float growthTimeSeconds
+    }
 
-class PlantGrowth {
-    <<enumeration>>
-    GRASS(5s)
-    CREEPING(10s)
-    BUSH(15s)
-    SUPPORT(30s)
-    TREE(60s)
-    +float growthTimeSeconds
-}
+    class PlantState {
+        <<enumeration>>
+        PLANTADA
+        PEDINDO_AGUA
+        PRONTA
+    }
 
-class PlantState {
-    <<enumeration>>
-    PLANTADA
-    PEDINDO_AGUA
-    PRONTA
-}
+    class Level {
+        <<enumeration>>
+        NIVEL_1
+        NIVEL_2
+        NIVEL_10
+        +int numero
+        +int xpNecessario
+        +List~IngredientId~ plantasDesbloqueadas
+        +List~IngredientId~ receitasDesbloqueadas
+        +proximo() Level
+    }
 
-class Level {
-    <<enumeration>>
-    NIVEL_1 .. NIVEL_10
-    +int numero
-    +int xpNecessario
-    +List~IngredientId~ plantasDesbloqueadas
-    +List~IngredientId~ receitasDesbloqueadas
-    +proximo() Level
-}
+    class EstadoTile {
+        <<enumeration>>
+        NORMAL
+        ARADA
+        PLANTADA
+    }
 
-class EstadoTile {
-    <<enumeration>>
-    NORMAL
-    ARADA
-    PLANTADA
-}
+    %% ── Herança ──────────────────────────────────────────────────
+    Ingredient <|-- Plant
+    Ingredient <|-- Recipe
 
-%% ── Herança ──────────────────────────────────────────────────
-Ingredient <|-- Plant
-Ingredient <|-- Recipe
+    %% ── Composição / Associação ──────────────────────────────────
+    Plant "1" *-- "1" PlantGrowth
+    Plant "1" o-- "1..*" Tool
 
-%% ── Composição / Associação ──────────────────────────────────
-Plant "1" *-- "1" PlantGrowth
-Plant "1" o-- "1..*" Tool
+    Recipe "1" o-- "1..*" Ingredient
 
-Recipe "1" o-- "1..*" Ingredient
+    PlantInstance "1" --> "1" Plant
+    PlantInstance --> PlantState
 
-PlantInstance "1" --> "1" Plant
-PlantInstance --> PlantState
+    TileHorta "1" *-- "0..1" PlantInstance
+    TileHorta --> EstadoTile
 
-TileHorta "1" *-- "0..1" PlantInstance
-TileHorta --> EstadoTile
+    Bag --> IngredientId
 
-Bag --> IngredientId
+    User --> Level
 
-User --> Level
+    ToolRegistry "1" *-- "5" Tool
+    PlantRegistry "1" --> "1" ToolRegistry
+    PlantRegistry "1" *-- "10" Plant
 
-ToolRegistry "1" *-- "5" Tool
-PlantRegistry "1" --> "1" ToolRegistry
-PlantRegistry "1" *-- "10" Plant
+    RecipeRegistry "1" --> "1" PlantRegistry
+    RecipeRegistry "1" *-- "10" Recipe
 
-RecipeRegistry "1" --> "1" PlantRegistry
-RecipeRegistry "1" *-- "10" Recipe
+    GameScreen --> "1" Bag
+    GameScreen --> "1" User
+    GameScreen --> "1" PlantRegistry
+    GameScreen --> "1" RecipeRegistry
+    GameScreen "1" *-- "54" TileHorta
 
-GameScreen --> "1" Bag
-GameScreen --> "1" User
-GameScreen --> "1" PlantRegistry
-GameScreen --> "1" RecipeRegistry
-GameScreen "1" *-- "54" TileHorta
+    Main --> GameScreen
+```
 
-Main --> GameScreen
-
+   
 - Usei o Claude para fazer esse mermaid, fiz pela função projeto, anexei todo o meu projeto e ele fez isso. (João)
 
 
